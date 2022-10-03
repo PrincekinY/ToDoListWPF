@@ -1,0 +1,39 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Style x:Key="MyMenuButton" TargetType="Button">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid>
+                        <Border x:Name="borderHead"></Border>
+                        <Border x:Name="border"></Border>
+                        <ContentPresenter HorizontalAlignment="Left" VerticalAlignment="Center" Margin="20,0,0,0"></ContentPresenter>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="borderHead" Property="BorderThickness" Value="8,0,0,0"></Setter>
+                            <Setter TargetName="borderHead" Property="BorderBrush" Value="#00273C"></Setter>
+                            <Setter TargetName="border" Property="Background" Value="white"></Setter>
+                            <Setter TargetName="border" Property="Opacity" Value="0.2"></Setter>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="borderHead" Property="BorderThickness" Value="8,0,0,0"></Setter>
+                            <Setter TargetName="borderHead" Property="BorderBrush" Value="#00273C"></Setter>
+                            <Setter TargetName="border" Property="Background" Value="white"></Setter>
+                            <Setter TargetName="border" Property="Opacity" Value="0.2"></Setter>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="DeleteButton" TargetType="Button">
+        <Setter Property="Foreground" Value="#D3D3D3">
+            
+        </Setter>
+    </Style>
+
+
+</ResourceDictionary>

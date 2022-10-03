@@ -1,0 +1,186 @@
+﻿<Page x:Class="ToDoListWPF.Views.BookcaseView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:ToDoListWPF.Views"
+      xmlns:prism="http://prismlibrary.com/"
+      prism:ViewModelLocator.AutoWireViewModel="True"
+      xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+      xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="BookcaseView">
+
+    <DockPanel >
+        <Grid  >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="6*"/>
+                <RowDefinition Height="94*"/>
+            </Grid.RowDefinitions>
+            <Border Grid.Row="0" x:Name="pageTitle" Margin="5" CornerRadius="4" Background="#FFF1E1D0">
+                <Label Foreground="#633837"  Content="Bookcase Info" FontSize="14" FontFamily="Arial" FontWeight="Bold" Margin="10,0,0,0" VerticalAlignment="Center" FontStyle="Italic"  ></Label>
+            </Border>
+            <md:Card  Grid.Row="1" Margin="5,0,5,5" >
+                <md:DrawerHost IsRightDrawerOpen="{Binding IsRightDrawerOpen}">
+                    <md:DrawerHost.RightDrawerContent>
+                        <!--右侧抽屉部分-->
+                        <DockPanel Width="280" LastChildFill="False" Background="#FFBAC2D4">
+                            <TextBlock Padding="20,10" DockPanel.Dock="Top" FontSize="16" FontWeight="Bold"
+                                Text="{Binding BookDrawerTitle}" Margin="0,10,0,0" />
+                            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="20,10,20,10">
+                                <Label  Content="Name" Width="60" FontWeight="Bold"></Label>
+                                <TextBox Text="{Binding CurrentBook.BookName}" Width="180" md:HintAssist.Hint="BookName" Cursor="Arrow" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="20,10,20,10">
+                                <Label  Content="Des" Width="60" FontWeight="Bold"></Label>
+                                <TextBox Text="{Binding CurrentBook.Author}" Width="180" md:HintAssist.Hint="Author" Cursor="Arrow" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="20,10,20,10">
+                                <Label  Content="StartDay" Width="60" FontWeight="Bold"></Label>
+                                <DatePicker SelectedDate="{Binding CurrentBook.StartRead}" Width="180"></DatePicker>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="20,10,20,10">
+                                <Label  Content="EndDay" Width="60" FontWeight="Bold"></Label>
+                                <DatePicker SelectedDate="{Binding CurrentBook.EndRead}" Width="180"></DatePicker>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="20,10,20,10">
+                                <Label  Content="Status" Width="60" FontWeight="Bold"></Label>
+                                <ComboBox SelectedValue="{Binding CurrentBook.Status}" ItemsSource="{Binding ReadingStatus}" Width="180"></ComboBox>
+                            </StackPanel>
+                            <Button Command="{Binding AddBookCmd}" Visibility="{Binding AddBtnVisibility}" Margin="20,10" Content="Add" 
+                                DockPanel.Dock="Top" Cursor="Hand" FontWeight="Bold" Foreground="#DDFFFFFF" BorderBrush="{x:Null}" Background="#FFD8D6D9"  />
+                            <Button Command="{Binding EditBookCmd}" Visibility="{Binding EditBtnVisibility}"  Margin="20,10" Content="Edit" 
+                            DockPanel.Dock="Top" Cursor="Hand" FontWeight="Bold" Foreground="#DDFFFFFF" BorderBrush="{x:Null}" Background="#FFD8D6D9" />
+                        </DockPanel>
+                    </md:DrawerHost.RightDrawerContent>
+
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="6*"/>
+                            <RowDefinition Height="94*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="4*"></ColumnDefinition>
+                            <ColumnDefinition Width="1*"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <DockPanel Margin="5,0,5,0">
+                            
+                            
+                        </DockPanel>
+                        <Border CornerRadius="4" Grid.Column="1" BorderThickness="1" BorderBrush="#FF99A4BC" Margin="0,2,30,2" >
+                            <DockPanel VerticalAlignment="Center">
+                                <md:PackIcon Grid.Column="0" Margin="10,0,5,0"
+                                        Kind="PlusCircleOutline" Foreground="#FF99A4BC" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+                                <Button Grid.Column="1"
+                                    Command="{Binding OpenAddBookCmd}" 
+                                    Content="Add" VerticalAlignment="Center"
+                                    Style="{StaticResource MaterialDesignOutlinedLightButton}"
+                                    Foreground="#FF99A4BC" Cursor="Hand" BorderBrush="{x:Null}">
+                                </Button>
+                            </DockPanel>
+                        </Border>
+
+                        <DockPanel Grid.Row="1" Grid.ColumnSpan="2">
+
+
+                            <ScrollViewer DockPanel.Dock="Top" VerticalScrollBarVisibility="Auto" Margin="10,5" Template="{StaticResource MyScrollViewer}">
+                                <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding BookSet}" CanUserAddRows="False"
+                                      md:DataGridAssist.CellPadding="2 2 2 2" md:DataGridAssist.ColumnHeaderPadding="4 6 4 6">
+                                    <DataGrid.Columns>
+
+                                        <DataGridTextColumn Header="BookName" Binding="{Binding BookName}" Width="2*" IsReadOnly="True">
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="VerticalAlignment" Value="Center" />
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
+                                        <DataGridTextColumn Header="Author" Binding="{Binding Author}" Width="2*" IsReadOnly="True">
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="VerticalAlignment" Value="Center" />
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
+                                        <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="2*" IsReadOnly="True">
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="VerticalAlignment" Value="Center" />
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
+                                        <DataGridTextColumn Header="Start reading" Binding="{Binding StartRead,StringFormat=yyyy-MM-dd}" Width="2*" IsReadOnly="True">
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="VerticalAlignment" Value="Center" />
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
+                                        <DataGridTextColumn Header="End reading" Binding="{Binding EndRead,StringFormat=yyyy-MM-dd}" Width="2*" IsReadOnly="True">
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="VerticalAlignment" Value="Center" />
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
+                                        <DataGridTemplateColumn  Width="*">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <Button Content="{md:PackIcon Kind=DeleteCircle}"
+                                                Style="{StaticResource MaterialDesignFlatLightButton}"
+                                                    Foreground="#CD3333"
+                                            CommandParameter="{Binding}"
+                                            Command="{Binding DataContext.DeleteBookCmd, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=DataGrid}}" >
+                                                    </Button>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                            <DataGridTemplateColumn.CellEditingTemplate>
+                                                <DataTemplate>
+                                                    <Button Content="{md:PackIcon Kind=DeleteCircle}"
+                                                Style="{StaticResource MaterialDesignFlatLightButton}"
+                                                    Foreground="#CD3333"
+                                            CommandParameter="{Binding}"
+                                            Command="{Binding DataContext.DeleteBookCmd, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=DataGrid}}" >
+                                                    </Button>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellEditingTemplate>
+                                        </DataGridTemplateColumn>
+                                        <DataGridTemplateColumn  Width="*">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <Button
+                                            Style="{StaticResource MaterialDesignFlatLightButton}"
+                                            Content="{md:PackIcon Kind=PencilBox}"
+                                            Foreground="#26877D"
+                                            CommandParameter="{Binding}"
+                                            Command="{Binding DataContext.OpenEditBookCmd, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=DataGrid}}">
+                                                    </Button>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                            <DataGridTemplateColumn.CellEditingTemplate>
+                                                <DataTemplate>
+                                                    <Button
+                                            Style="{StaticResource MaterialDesignFlatLightButton}"
+                                            Content="{md:PackIcon Kind=PencilBox}"
+                                            Foreground="#26877D"
+                                            CommandParameter="{Binding}"
+                                            Command="{Binding DataContext.OpenEditBookCmd, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=DataGrid}}">
+                                                    </Button>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellEditingTemplate>
+                                        </DataGridTemplateColumn>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+
+                            </ScrollViewer>
+
+                        </DockPanel>
+
+                    </Grid>
+                </md:DrawerHost>
+            </md:Card>
+
+        </Grid>
+    </DockPanel>
+</Page>
