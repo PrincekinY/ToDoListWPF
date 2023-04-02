@@ -22,6 +22,7 @@ namespace ToDoListWPF.ViewModels
         public FitnessViewModel()
         {
             //初始化
+            dBCon = new MysqlDBCon();
             CurrentFit = new Fitness();
             loginID = ConfigurationManager.AppSettings["loginAccount"];
             SelectMonth = DateTime.Now.Month;
@@ -38,21 +39,20 @@ namespace ToDoListWPF.ViewModels
 
         public void GetAllfit()
         {
-            DateTime dateTime = DateTime.Now;
-            Allfit = GetFitByMonth(dateTime);
+            int month = DateTime.Now.Month;
+            Allfit = GetFitByMonth(month);
         }
 
-        public ObservableCollection<Fitness> GetFitByMonth(DateTime dateTime)
+        public ObservableCollection<Fitness> GetFitByMonth(int month)
         {
             //DateTime dateTime = DateTime.Now;
             ObservableCollection<Fitness> fitnesses = new ObservableCollection<Fitness>();
-            var year = dateTime.Year;
-            var month = dateTime.Date.Month;
-            var next_month = dateTime.AddMonths(1).Month;
+            var year = DateTime.Now.Year;
+            var next_month = month+1;
             var month_date = Convert.ToDateTime(year+"-"+month+"-01");
             var nextmonth_date = Convert.ToDateTime(year + "-" + next_month + "-01").AddDays(-1);
-            string sql = "select * from fitnesslist where fitnessDay between '"+month_date+"' and '"+nextmonth_date+ "' ORDER BY fitnessDay";
-            MysqlDBCon dBCon = new MysqlDBCon();
+            string sql = "select * from fitnesslist where fitnessDay between '"+month_date+"' and '"+nextmonth_date+ "' and operator='"+loginID+"' ORDER BY fitnessDay";
+
             IDataReader dr = dBCon.sqlRead(sql);
             while (dr.Read())
             {
@@ -73,13 +73,14 @@ namespace ToDoListWPF.ViewModels
                     Thigh = float.Parse(dr["thigh"].ToString())
                 });
             }
+            dr.Close();
             return fitnesses;
         }
 
         
 
         private Fitness currentFit;
-        private readonly IDialogService _dialogService;
+        private readonly MysqlDBCon dBCon;
 
         public Fitness CurrentFit
         {
@@ -131,19 +132,15 @@ namespace ToDoListWPF.ViewModels
                 int trow = dBCon.sqlExcute(sql);
                 if (trow > 0)
                 {
-                    CallMessageBox("Suceess to add.");
+                    Allfit = GetFitByMonth(SelectMonth);
+                    MessageBox.Show("添加成功！");
                     IsRightDrawerOpen = false;
                 }
             }
-            catch { CallMessageBox("Fail to connect."); }
+            catch { MessageBox.Show("添加失败。"); }
         }
 
-        public void CallMessageBox(string message)
-        {
-            DialogParameters param = new DialogParameters();
-            param.Add("MessageInfo", message);
-            _dialogService.ShowDialog("NotificationDialog", param, arg => { });
-        }
+
 
         public List<string> GetFitList()
         {
@@ -161,6 +158,8 @@ namespace ToDoListWPF.ViewModels
             list.Add(CurrentFit.Bustline.ToString());
             list.Add(CurrentFit.Calfgirth.ToString());
             list.Add(CurrentFit.Thigh.ToString());
+            list.Add(DateTime.Now.Date.ToString());
+            list.Add(loginID);
             return list;
         }
 
@@ -210,14 +209,13 @@ namespace ToDoListWPF.ViewModels
         private void DeleteFitMethod(Fitness obj)
         {
             string tid = obj.ID;
-            string sql = "delete from todolist where todoID='" + tid + "'";
-            MysqlDBCon dBCon = new MysqlDBCon();
+            string sql = "delete from fitnesslist where fitnessID='" + tid + "'";
             try
             {
                 int trow = dBCon.sqlExcute(sql);
-                if (trow > 0) { Allfit.Remove(obj); CallMessageBox("Success to delete."); }
+                if (trow > 0) { Allfit.Remove(obj); MessageBox.Show("删除成功^_^"); }
             }
-            catch { CallMessageBox("Fail to connect."); }
+            catch { MessageBox.Show("删除失败-_-"); }
         }
 
         public DelegateCommand EditFitCmd { get; private set; }
@@ -225,12 +223,10 @@ namespace ToDoListWPF.ViewModels
         {
             var list = GetFitListExceptID();
             string fid = CurrentFit.ID;
-            string sql_data = string.Join("','", list);
             //var todo = new Todos() { TodoID = tid, TodoName = tname, TodoDes = tdes, TodoDay = tdate, TodoStatus = tstatus };
             //string sql = "update todolist set(fitnessDay,weight,breakfast,lunch,dinner,sport,hipline,waistline,belly,bustline,calfgirth,thigh) values('"+sql_data+"') where fitnessID='" + fid + "'";
-            string sql = String.Format("update fitnesslist set fitnessDay='{0}',weight='{1}',breakfast='{2}',lunch='{3}',dinner='{4}',sport='{5}',hipline='{6}',waistline='{7}',belly='{8}',bustline='{9}',calfgirth='{10}',thigh='{11}' where fitnessID='{12}'",
-                list[0],list[1], list[2], list[3], list[4], list[5], list[6], list[7], list[8], list[9], list[10], list[11], fid);
-            MysqlDBCon dBCon = new MysqlDBCon();
+            string sql = String.Format("update fitnesslist set fitnessDay='{0}',weight='{1}',breakfast='{2}',lunch='{3}',dinner='{4}',sport='{5}',hipline='{6}',waistline='{7}',belly='{8}',bustline='{9}',calfgirth='{10}',thigh='{11}',changeTime='{13}' where fitnessID='{12}'",
+                list[0],list[1], list[2], list[3], list[4], list[5], list[6], list[7], list[8], list[9], list[10], list[11], fid,DateTime.Now.Date.ToString());
             try
             {
                 int trow = dBCon.sqlExcute(sql);
@@ -249,11 +245,11 @@ namespace ToDoListWPF.ViewModels
                     Allfit[tindex].Bustline = CurrentFit.Bustline;
                     Allfit[tindex].Calfgirth = CurrentFit.Calfgirth;
                     Allfit[tindex].Thigh = CurrentFit.Thigh;
-                    CallMessageBox("Success to edit.");
+                    MessageBox.Show("修改成功。.");
                     IsRightDrawerOpen = false;
                 }
             }
-            catch { CallMessageBox("Fail to connect."); }
+            catch { MessageBox.Show("修改失败。"); }
         }
 
         public DelegateCommand<Fitness> OpenEditFitCmd { get; private set; }
@@ -284,12 +280,9 @@ namespace ToDoListWPF.ViewModels
             int month = SelectMonth;
             try
             {
-                DateTime dateTime = DateTime.Now;
-                var year = dateTime.Year;
-                var month_date = DateTime.Parse(year + "-" + month + "-01");
-                Allfit = GetFitByMonth(month_date);
+                Allfit = GetFitByMonth(month);
             }
-            catch { CallMessageBox("查找失败啦！"); }
+            catch { MessageBox.Show("查找失败啦！"); }
         }
 
         public IEnumerable<int> Months => new[] { 1,2,3,4,5,6,7,8,9, 10, 11, 12 };

@@ -5,6 +5,7 @@ using Prism.Services.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Configuration;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -17,10 +18,11 @@ namespace ToDoListWPF.ViewModels
 {
     public class BookcaseViewModel : BindableBase
     {
-        public BookcaseViewModel(IDialogService dialogService)
+        public BookcaseViewModel()
         {
-            _dialogService = dialogService;
+            dBCon = new MysqlDBCon();
             IsRightDrawerOpen = false;
+            loginID = ConfigurationManager.AppSettings["loginAccount"];
 
             BookSet = GetTodayBooks();
             CurrentBook = new Books();
@@ -69,6 +71,7 @@ namespace ToDoListWPF.ViewModels
         }
 
         private bool isRightDrawerOpen;
+        private readonly MysqlDBCon dBCon;
 
         public bool IsRightDrawerOpen
         {
@@ -76,6 +79,7 @@ namespace ToDoListWPF.ViewModels
             set { isRightDrawerOpen = value; RaisePropertyChanged(); }
         }
 
+        private readonly string loginID;
 
         public DelegateCommand OpenAddBookCmd { get; private set; }
         private void OpenAddBookMethod()
@@ -99,6 +103,7 @@ namespace ToDoListWPF.ViewModels
             BookDrawerTitle = "Edit Book";
             AddBtnVisibility = Visibility.Collapsed;
             EditBtnVisibility = Visibility.Visible;
+            CurrentBook.ID = obj.ID;
             CurrentBook.BookName = obj.BookName;
             CurrentBook.Author = obj.Author;
             CurrentBook.Status = obj.Status;
@@ -116,7 +121,7 @@ namespace ToDoListWPF.ViewModels
             var bend = CurrentBook.EndRead.Date;
             string bstatus_str = CurrentBook.Status;
             int bstatus_int = StatusStrToInt(bstatus_str);
-            string sql = "insert into booklist values('" + bid + "','" + bname + "','" + author + "','" + bstart + "','" + bend + "','"+bstatus_int+"')";
+            string sql = "insert into booklist values('" + bid + "','" + bname + "','" + author + "','" + bstart + "','" + bend + "','"+bstatus_int+"','','"+DateTime.Now.Date.ToString()+"','"+loginID+"')";
             MysqlDBCon dBCon = new MysqlDBCon();
             try
             {
@@ -124,10 +129,10 @@ namespace ToDoListWPF.ViewModels
                 if (trow > 0)
                 {
                     BookSet.Add(new Books() { ID = bid, BookName = bname, Author = author, StartRead = bstart, EndRead = bend,Status=bstatus_str });
-                    CallMessageBox("Suceess to add.");
+                    MessageBox.Show("添加成功.");
                 }
             }
-            catch { CallMessageBox("Fail to connect."); }
+            catch { MessageBox.Show("添加失败."); }
         }
 
         public int StatusStrToInt(string obj)
@@ -140,12 +145,6 @@ namespace ToDoListWPF.ViewModels
 
         public IEnumerable<string> ReadingStatus => new[] { "想看", "正在看", "已看完" };
 
-        public void CallMessageBox(string message)
-        {
-            DialogParameters param = new DialogParameters();
-            param.Add("MessageInfo", message);
-            _dialogService.ShowDialog("NotificationDialog", param, arg => { });
-        }
 
         private DateTime selectedDate;
 
@@ -167,9 +166,13 @@ namespace ToDoListWPF.ViewModels
 
         public ObservableCollection<Books> GetTodayBooks()
         {
-            ObservableCollection<Books> todoset;
+            ObservableCollection<Books> todoset = new ObservableCollection<Books>();
             //DateTime today = DateTime.Now;
-            todoset = GetDateBooks();
+            try
+            {
+                todoset = GetDateBooks();
+            }
+            catch { MessageBox.Show("查找失败啦！"); }
             return todoset;
         }
 
@@ -177,7 +180,7 @@ namespace ToDoListWPF.ViewModels
         {
             ObservableCollection<Books> bookset = new ObservableCollection<Books>();
             //var specific_date = dateTime.Date;
-            string sql = "select * from booklist";
+            string sql = "select * from booklist where operator='"+loginID+"'";
             MysqlDBCon dBCon = new MysqlDBCon();
             IDataReader dr = dBCon.sqlRead(sql);
             while (dr.Read())
@@ -192,6 +195,7 @@ namespace ToDoListWPF.ViewModels
                 Books t = new Books() { ID = id, BookName = name, Author = author, StartRead = sday, EndRead = eday,Status=status ,BookImage=pic};
                 bookset.Add(t);
             }
+            dr.Close();
             return bookset;
         }
 
@@ -209,13 +213,12 @@ namespace ToDoListWPF.ViewModels
         {
             string tid = obj.ID;
             string sql = "delete from booklist where bookID='" + tid + "'";
-            MysqlDBCon dBCon = new MysqlDBCon();
             try
             {
                 int trow = dBCon.sqlExcute(sql);
-                if (trow > 0) { BookSet.Remove(obj); CallMessageBox("Success to delete."); }
+                if (trow > 0) { BookSet.Remove(obj); MessageBox.Show("删除成功"); }
             }
-            catch { CallMessageBox("Fail to connect."); }
+            catch { MessageBox.Show("删除失败"); }
         }
 
         public DelegateCommand EditBookCmd { get; private set; }
@@ -229,8 +232,7 @@ namespace ToDoListWPF.ViewModels
             var tstatus = CurrentBook.Status;
             var status_int = StatusStrToInt(tstatus);
             //var todo = new Books() { BookID = tid, BookName = tname, BookDes = tdes, BookDay = tdate, BookStatus = tstatus };
-            string sql = "update booklist set bookName='" + name + "',author='" + author + "',startread='" + sdate + "',endread='"+edate+"',todoStatus='" + status_int + "' where bookID='" + id + "'";
-            MysqlDBCon dBCon = new MysqlDBCon();
+            string sql = "update booklist set bookName='" + name + "',author='" + author + "',startread='" + sdate + "',endread='"+edate+"',status='" + status_int + "',changeTime='"+DateTime.Now.Date.ToString()+"' where bookID='" + id + "'";
             try
             {
                 int trow = dBCon.sqlExcute(sql);
@@ -242,10 +244,11 @@ namespace ToDoListWPF.ViewModels
                     BookSet[tindex].StartRead = sdate;
                     BookSet[tindex].EndRead = edate;
                     BookSet[tindex].Status = tstatus;
-                    CallMessageBox("Success to edit.");
+                    MessageBox.Show("修改成功。");
+                    IsRightDrawerOpen = false;
                 }
             }
-            catch { CallMessageBox("Fail to connect."); }
+            catch { MessageBox.Show("修改失败。"); }
         }
 
         public DelegateCommand<Books> UploadBookImageCmd { get; set; }
@@ -259,13 +262,15 @@ namespace ToDoListWPF.ViewModels
             {
                 obj.BookImage = openFileDialog.FileName;
                 //判断文件是不是对的
-                MysqlDBCon dBCon = new MysqlDBCon();
+                
                 try
                 {
-                    string sql = "update booklist set bookImage = '" + obj.BookImage + "' where bookID='" + obj.ID + "'";
+                    string imagepath = obj.BookImage.Replace("\\","\\\\");
+                    string sql = "update booklist set bookImage ='" + imagepath + "' where bookID='" + obj.ID + "'";
                     int brow = dBCon.sqlExcute(sql);
+                    MessageBox.Show("上传成功。");
                 }
-                catch { CallMessageBox("Fail to save db."); }
+                catch { MessageBox.Show("上传失败。"); }
             }
         }
 

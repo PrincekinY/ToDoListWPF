@@ -35,5 +35,21 @@
         </Setter>
     </Style>
 
-
+    <Style x:Key="SelectButton" TargetType="Button">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid>
+                        <Border x:Name="border" Background="#33000000"  BorderBrush="WhiteSmoke"></Border>
+                        <ContentPresenter HorizontalAlignment="Left" VerticalAlignment="Center" Margin="20,0,0,0">
+                            
+                        </ContentPresenter>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="FontSize" Value="14">
+            
+        </Setter>
+    </Style>
 </ResourceDictionary>

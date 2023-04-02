@@ -84,109 +84,110 @@
                         <DockPanel Grid.Row="1" Grid.ColumnSpan="2">
 
 
-                            <ScrollViewer DockPanel.Dock="Top" VerticalScrollBarVisibility="Auto" Margin="10,5" Template="{StaticResource MyScrollViewer}">
-                                <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding BookSet}" CanUserAddRows="False"
+                            <DataGrid AutoGenerateColumns="False" Margin="10,5"
+                                      ItemsSource="{Binding BookSet}" CanUserAddRows="False"
                                       md:DataGridAssist.CellPadding="2 2 2 2" md:DataGridAssist.ColumnHeaderPadding="4 6 4 6">
-                                    <DataGrid.Columns>
-                                        <DataGridTemplateColumn Header="Book">
-                                            <DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <StackPanel Orientation="Horizontal" >
-                                                        <Border Background="#FF99A4BC" Width="50">
-                                                            <Image Source="{Binding BookImage}" MaxWidth="50" MaxHeight="50" Margin="5,0"></Image>
-                                                        </Border>
-                                                        <Button MaxHeight="20" MaxWidth="50" Margin="5,0" CommandParameter="{Binding }"
+                                <DataGrid.Resources>
+                                    <Style TargetType="ScrollBar" BasedOn="{StaticResource MyScrollBarStyle}"/>
+                                </DataGrid.Resources>
+                                <DataGrid.Columns>
+                                    <DataGridTemplateColumn Header="Book">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal" >
+                                                    <Border Background="#FF99A4BC" Width="50">
+                                                        <Image Source="{Binding BookImage}" MaxWidth="50" MaxHeight="50" Margin="5,0"></Image>
+                                                    </Border>
+                                                    <Button MaxHeight="20" MaxWidth="50" Margin="5,0" CommandParameter="{Binding }"
                                                                 Style="{StaticResource MaterialDesignFlatLightButton}" Foreground="#FF99A4BC"
                                                                 Content="{md:PackIcon Kind=ProgressUpload}" Command="{Binding DataContext.UploadBookImageCmd, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=DataGrid}}"></Button>
-                                                    </StackPanel>
-                                                </DataTemplate>
-                                            </DataGridTemplateColumn.CellTemplate>
-                                        </DataGridTemplateColumn>
-                                        <DataGridTextColumn Header="BookName" Binding="{Binding BookName}" Width="2*" IsReadOnly="True">
-                                            <DataGridTextColumn.ElementStyle>
-                                                <Style TargetType="TextBlock">
-                                                    <Setter Property="VerticalAlignment" Value="Center" />
-                                                </Style>
-                                            </DataGridTextColumn.ElementStyle>
-                                        </DataGridTextColumn>
-                                        <DataGridTextColumn Header="Author" Binding="{Binding Author}" Width="2*" IsReadOnly="True">
-                                            <DataGridTextColumn.ElementStyle>
-                                                <Style TargetType="TextBlock">
-                                                    <Setter Property="VerticalAlignment" Value="Center" />
-                                                </Style>
-                                            </DataGridTextColumn.ElementStyle>
-                                        </DataGridTextColumn>
-                                        <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="2*" IsReadOnly="True">
-                                            <DataGridTextColumn.ElementStyle>
-                                                <Style TargetType="TextBlock">
-                                                    <Setter Property="VerticalAlignment" Value="Center" />
-                                                </Style>
-                                            </DataGridTextColumn.ElementStyle>
-                                        </DataGridTextColumn>
-                                        <DataGridTextColumn Header="Start reading" Binding="{Binding StartRead,StringFormat=yyyy-MM-dd}" Width="2*" IsReadOnly="True">
-                                            <DataGridTextColumn.ElementStyle>
-                                                <Style TargetType="TextBlock">
-                                                    <Setter Property="VerticalAlignment" Value="Center" />
-                                                </Style>
-                                            </DataGridTextColumn.ElementStyle>
-                                        </DataGridTextColumn>
-                                        <DataGridTextColumn Header="End reading" Binding="{Binding EndRead,StringFormat=yyyy-MM-dd}" Width="2*" IsReadOnly="True">
-                                            <DataGridTextColumn.ElementStyle>
-                                                <Style TargetType="TextBlock">
-                                                    <Setter Property="VerticalAlignment" Value="Center" />
-                                                </Style>
-                                            </DataGridTextColumn.ElementStyle>
-                                        </DataGridTextColumn>
-                                        <DataGridTemplateColumn  Width="*">
-                                            <DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <Button Content="{md:PackIcon Kind=DeleteCircle}"
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTextColumn Header="BookName" Binding="{Binding BookName}" Width="2*" IsReadOnly="True">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="VerticalAlignment" Value="Center" />
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Header="Author" Binding="{Binding Author}" Width="2*" IsReadOnly="True">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="VerticalAlignment" Value="Center" />
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="2*" IsReadOnly="True">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="VerticalAlignment" Value="Center" />
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Header="Start reading" Binding="{Binding StartRead,StringFormat=yyyy-MM-dd}" Width="2*" IsReadOnly="True">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="VerticalAlignment" Value="Center" />
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Header="End reading" Binding="{Binding EndRead,StringFormat=yyyy-MM-dd}" Width="2*" IsReadOnly="True">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="VerticalAlignment" Value="Center" />
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+                                    <DataGridTemplateColumn  Width="*">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Button Content="{md:PackIcon Kind=DeleteCircle}"
                                                 Style="{StaticResource MaterialDesignFlatLightButton}"
                                                     Foreground="#CD3333"
                                             CommandParameter="{Binding}"
                                             Command="{Binding DataContext.DeleteBookCmd, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=DataGrid}}" >
-                                                    </Button>
-                                                </DataTemplate>
-                                            </DataGridTemplateColumn.CellTemplate>
-                                            <DataGridTemplateColumn.CellEditingTemplate>
-                                                <DataTemplate>
-                                                    <Button Content="{md:PackIcon Kind=DeleteCircle}"
+                                                </Button>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                        <DataGridTemplateColumn.CellEditingTemplate>
+                                            <DataTemplate>
+                                                <Button Content="{md:PackIcon Kind=DeleteCircle}"
                                                 Style="{StaticResource MaterialDesignFlatLightButton}"
                                                     Foreground="#CD3333"
                                             CommandParameter="{Binding}"
                                             Command="{Binding DataContext.DeleteBookCmd, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=DataGrid}}" >
-                                                    </Button>
-                                                </DataTemplate>
-                                            </DataGridTemplateColumn.CellEditingTemplate>
-                                        </DataGridTemplateColumn>
-                                        <DataGridTemplateColumn  Width="*">
-                                            <DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <Button
+                                                </Button>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellEditingTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTemplateColumn  Width="*">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Button
                                             Style="{StaticResource MaterialDesignFlatLightButton}"
                                             Content="{md:PackIcon Kind=PencilBox}"
                                             Foreground="#26877D"
                                             CommandParameter="{Binding}"
                                             Command="{Binding DataContext.OpenEditBookCmd, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=DataGrid}}">
-                                                    </Button>
-                                                </DataTemplate>
-                                            </DataGridTemplateColumn.CellTemplate>
-                                            <DataGridTemplateColumn.CellEditingTemplate>
-                                                <DataTemplate>
-                                                    <Button
+                                                </Button>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                        <DataGridTemplateColumn.CellEditingTemplate>
+                                            <DataTemplate>
+                                                <Button
                                             Style="{StaticResource MaterialDesignFlatLightButton}"
                                             Content="{md:PackIcon Kind=PencilBox}"
                                             Foreground="#26877D"
                                             CommandParameter="{Binding}"
                                             Command="{Binding DataContext.OpenEditBookCmd, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=DataGrid}}">
-                                                    </Button>
-                                                </DataTemplate>
-                                            </DataGridTemplateColumn.CellEditingTemplate>
-                                        </DataGridTemplateColumn>
-                                    </DataGrid.Columns>
-                                </DataGrid>
-
-                            </ScrollViewer>
+                                                </Button>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellEditingTemplate>
+                                    </DataGridTemplateColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
 
                         </DockPanel>
 

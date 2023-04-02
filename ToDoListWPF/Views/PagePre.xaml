@@ -28,15 +28,47 @@
                     <lvc:LineSeries Values="2,4,6,8,10,12"/>
                 </lvc:CartesianChart.Series>
             </lvc:CartesianChart>
-            <!--制作计时器-->
-            <Label DockPanel.Dock="Top" Content="{Binding ConcentrateTime,StringFormat=HH:mm:ss}">
-                
-            </Label>
-            <md:TimePicker DockPanel.Dock="Top" Text="{Binding StartTime}">
+            <DockPanel DockPanel.Dock="Top">
+                <!--制作计时器-->
+                <Label DockPanel.Dock="Top" Content="{Binding ConcentrateTime,StringFormat=HH:mm:ss}">
 
-            </md:TimePicker>
-            <Button Command="{Binding StartConcentrateCmd}" Cursor="Hand">Start concentrate</Button>
-            <Button Command="{Binding StopConcentrateCmd}" Cursor="Hand">Stop concentrate</Button>
+                </Label>
+                <md:TimePicker DockPanel.Dock="Top" Text="{Binding StartTime}">
+
+                </md:TimePicker>
+                <Button Command="{Binding StartConcentrateCmd}" Cursor="Hand">Start concentrate</Button>
+                <Button Command="{Binding StopConcentrateCmd}" Cursor="Hand">Stop concentrate</Button>
+            </DockPanel>
+            <md:Card Width="200">
+                <Border Background="#FFBAC2D4" BorderThickness="2" >
+                    <Grid >
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="2*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <md:PopupBox >
+                            <DockPanel>
+                                <Label>Hi</Label>
+                            </DockPanel>
+                        </md:PopupBox>
+                        <DockPanel Grid.Row="1">
+                            <StackPanel >
+                                <TextBlock></TextBlock>
+                            </StackPanel>
+                        </DockPanel>
+                        <StackPanel Grid.Row="2" Orientation="Horizontal">
+                            <Button Content="{md:PackIcon Kind=TimerRefreshOutline}" Margin="10,0" Foreground="White"
+                                    Style="{StaticResource MaterialDesignFlatLightButton}"></Button>
+                            <Button Content="{md:PackIcon Kind=TimerPauseOutline}" Margin="5,0"  Foreground="White"
+                                    Style="{StaticResource MaterialDesignFlatLightButton}"></Button>
+                            <Button Content="{md:PackIcon Kind=TimerPlayOutline}" Margin="10,0"  Foreground="White"
+                                    Style="{StaticResource MaterialDesignFlatLightButton}"></Button>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </md:Card>
         </DockPanel>
+        
     </Grid>
 </Page>

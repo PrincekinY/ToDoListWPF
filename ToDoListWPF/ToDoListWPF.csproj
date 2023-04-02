@@ -7,12 +7,14 @@
     <ApplicationIcon>image\3430604_avatar_female_profile_reading_woman_icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="image\icons8-girl-64.jpg" />
     <None Remove="image\icons8-girl-64.png" />
     <None Remove="image\八月.jpg" />
     <None Remove="Views\八月.jpg" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="image\3430604_avatar_female_profile_reading_woman_icon.ico" />
+    <Resource Include="image\icons8-girl-64.jpg" />
     <Resource Include="image\icons8-girl-64.png" />
     <Resource Include="image\八月.jpg" />
     <Resource Include="Views\八月.jpg" />

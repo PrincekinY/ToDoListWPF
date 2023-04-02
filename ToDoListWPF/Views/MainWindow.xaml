@@ -7,7 +7,7 @@
         Style="{StaticResource WindowDefaultStyleKey}"
         WindowStartupLocation="CenterScreen"
         Background="Transparent"
-        Title="{Binding Title}" Height="600" Width="1050" >
+        Title="{Binding Title}" Height="600" Width="1000" >
     <Grid>
         <Border BorderThickness="1" BorderBrush="#FFBAC2D4" >
             <Grid>
@@ -32,28 +32,33 @@
                 <Border Grid.Row="1" Background="White" CornerRadius="0,0,10,10">
                     <DockPanel>
                         <DockPanel.Background>
-                            <ImageBrush ImageSource="/Views/八月.jpg" Stretch="UniformToFill" TileMode="None" Opacity="0.2"/>
+                            <ImageBrush ImageSource="/Views/八月.jpg" Stretch="Fill" TileMode="None" Opacity="0.2"/>
                         </DockPanel.Background>
                         <materialDesign:DrawerHost IsLeftDrawerOpen="{Binding ElementName=ShowNavigation, Path=IsChecked}" >
                             <materialDesign:DrawerHost.LeftDrawerContent>
                                 <DockPanel Width="150" Background="#FFBAC2D4">
                                     <StackPanel Orientation="Vertical">
                                         <DockPanel DockPanel.Dock="Top">
-                                            <Image Source="/image/icons8-girl-64.png" Width="50" Height="50" Margin="0,20,0,20"></Image>
+                                            <Image Source="/image/3430604_avatar_female_profile_reading_woman_icon.ico" Width="50" Height="50" Margin="0,20,0,20"></Image>
                                         </DockPanel>
                                         <DockPanel VerticalAlignment="Center" DockPanel.Dock="Top">
                                             <materialDesign:PackIcon Kind="FormatListChecks" Height="20" Width="20" Margin="10,5,5,5" Foreground="White"/>
-                                            <Button Content="ToDo" Click="ShowToDoList"
+                                            <Button Content="ToDo" Click="ShowToDoList" x:Name="ToDoBtn"
                                                     Style="{StaticResource MaterialDesignFlatLightButton}" FontWeight="Bold" Foreground="White" Cursor="Hand"></Button>
                                         </DockPanel>
                                         <DockPanel VerticalAlignment="Center" DockPanel.Dock="Top">
                                             <materialDesign:PackIcon Kind="AlphaHBoxOutline"  Height="20" Width="20" Margin="10,5,5,5" Foreground="White"/>
-                                            <Button Content="Fitness"  Click="ShowFitnessList" 
+                                            <Button Content="Fitness"  Click="ShowFitnessList" x:Name="FitBtn"
                                                     Style="{StaticResource MaterialDesignFlatLightButton}" FontWeight="Bold" Foreground="White"></Button>
                                         </DockPanel>
                                         <DockPanel VerticalAlignment="Center" DockPanel.Dock="Top">
                                             <materialDesign:PackIcon Kind="BookmarkBoxMultipleOutline"  Height="20" Width="20" Margin="10,5,5,5" Foreground="White"/>
-                                            <Button Content="Bookcase"  Click="ShowBookcaseList" 
+                                            <Button Content="Bookcase"  Click="ShowBookcaseList" x:Name="BookBtn"
+                                                    Style="{StaticResource MaterialDesignFlatLightButton}" FontWeight="Bold" Foreground="White" Cursor="Hand"></Button>
+                                        </DockPanel>
+                                        <DockPanel VerticalAlignment="Center" DockPanel.Dock="Top">
+                                            <materialDesign:PackIcon Kind="AlarmCheck"  Height="20" Width="20" Margin="10,5,5,5" Foreground="White"/>
+                                            <Button Content="Attention"  Click="Attention_Click" x:Name="AttentionBtn"
                                                     Style="{StaticResource MaterialDesignFlatLightButton}" FontWeight="Bold" Foreground="White" Cursor="Hand"></Button>
                                         </DockPanel>
                                         <DockPanel VerticalAlignment="Center" DockPanel.Dock="Top">

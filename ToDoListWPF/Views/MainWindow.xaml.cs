@@ -13,6 +13,7 @@ namespace ToDoListWPF.Views
         Frame fit_frame = new Frame() { Content = new FitnessView() };
         Frame book_frame = new Frame() { Content = new BookcaseView() };
         Frame pre_frame = new Frame() { Content = new PagePre() };
+        Frame atten_frame = new Frame() { Content = new AttentionView() };
         public MainWindow()
         {
             InitializeComponent();
@@ -31,21 +32,48 @@ namespace ToDoListWPF.Views
         private void ShowToDoList(object sender, RoutedEventArgs e)
         {
             mainContent.Content = todo_frame;
+            ChangeStyle();
+            Style style = (Style)this.FindResource("SelectButton");
+            ToDoBtn.Style = style;
         }
 
         private void ShowFitnessList(object sender, RoutedEventArgs e)
         {
             mainContent.Content = fit_frame;
+            ChangeStyle();
+            Style style = (Style)this.FindResource("SelectButton");
+            FitBtn.Style = style;
         }
 
         private void ShowBookcaseList(object sender, RoutedEventArgs e)
         {
             mainContent.Content = book_frame;
+            ChangeStyle();
+            Style style = (Style)this.FindResource("SelectButton");
+            BookBtn.Style = style;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             mainContent.Content = pre_frame;
+            ChangeStyle();
+        }
+
+        private void Attention_Click(object sender, RoutedEventArgs e)
+        {
+            mainContent.Content = atten_frame;
+            ChangeStyle();
+            Style style = (Style)this.FindResource("SelectButton");
+            AttentionBtn.Style = style;
+        }
+
+        public void ChangeStyle()
+        {
+            Style style = (Style)this.FindResource("MaterialDesignFlatLightButton");
+            ToDoBtn.Style = style;
+            FitBtn.Style = style;
+            BookBtn.Style = style;
+            AttentionBtn.Style = style;
         }
     }
 }
