@@ -3,37 +3,30 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:prism="http://prismlibrary.com/"
         prism:ViewModelLocator.AutoWireViewModel="True"
-        AllowsTransparency="True"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        WindowStyle="None"
+        Style="{StaticResource WindowDefaultStyleKey}"
         WindowStartupLocation="CenterScreen"
         Background="Transparent"
         Title="{Binding Title}" Height="600" Width="1050" >
     <Grid>
-        <Border BorderThickness="1" BorderBrush="#FFBAC2D4" CornerRadius="10,10,0,0">
+        <Border BorderThickness="1" BorderBrush="#FFBAC2D4" >
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="5*"/>
                     <RowDefinition Height="95*"/>
                 </Grid.RowDefinitions>
-                <Border Grid.Row="0" Grid.ColumnSpan="2" Background="#FFBAC2D4" CornerRadius="10,10,0,0">
-                    <DockPanel x:Name="topNav" Grid.Row="0" Grid.ColumnSpan="2" Background="Transparent">
-                        <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" Margin="25,0,0,0">
+                <Border Grid.Row="0" Grid.ColumnSpan="2" Background="#FFBAC2D4">
+                    <DockPanel x:Name="topNav" Grid.Row="0" Background="Transparent">
+                        <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" Margin="10,0,0,0">
                             <CheckBox x:Name="ShowNavigation" Content="{materialDesign:PackIcon Kind=NavigationVariant}" Foreground="White"
-                                        Style="{StaticResource MaterialDesignFlatLightButton}"></CheckBox>
-                        </StackPanel>
-
-                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-                            <Button x:Name="btnWinMin" Content="{materialDesign:PackIcon Kind=WindowMinimize}" Margin="0,0,20,0" Background="{x:Null}" BorderBrush="{x:Null}" Cursor="Hand" Foreground="White" ></Button>
-                            <Button x:Name="btnWinMax" Content="{materialDesign:PackIcon Kind=WindowMaximize}" Margin="0,0,20,0"  Background="{x:Null}" BorderBrush="{x:Null}" Cursor="Hand" Foreground="White"></Button>
-                            <Button x:Name="btnWinClose" Content="{materialDesign:PackIcon Kind=WindowClose}" Background="{x:Null}" BorderBrush="{x:Null}" Cursor="Hand" Foreground="White"/>
+                                        Style="{StaticResource MaterialDesignFlatLightButton}" Cursor="Hand"></CheckBox>
                         </StackPanel>
 
                         <TextBlock
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Margin="0,0,0,0"
-                            Text="Daily Life" Foreground="White" FontFamily="Arial" FontWeight="Bold" FontSize="16"/>
+                            Text="" Foreground="White" FontFamily="Arial" FontWeight="Bold" FontSize="16"/>
                     </DockPanel>
                 </Border>
                 <Border Grid.Row="1" Background="White" CornerRadius="0,0,10,10">
@@ -73,7 +66,7 @@
                             </materialDesign:DrawerHost.LeftDrawerContent>
                         </materialDesign:DrawerHost>
 
-                        <ContentControl  x:Name="mainContent" prism:RegionManager.RegionName="mainContent" DockPanel.Dock="Top">
+                        <ContentControl  x:Name="mainContent" prism:RegionManager.RegionName="mainContent" DockPanel.Dock="Top" Margin="5">
 
                         </ContentControl>
                     </DockPanel>

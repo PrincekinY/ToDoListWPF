@@ -91,9 +91,11 @@
                                         <DataGridTemplateColumn Header="Book">
                                             <DataGridTemplateColumn.CellTemplate>
                                                 <DataTemplate>
-                                                    <StackPanel Orientation="Horizontal">
-                                                        <Image Source="{Binding BookImage}" MaxWidth="50" MaxHeight="50" Margin="5,0"></Image>
-                                                        <Button MaxHeight="20" Margin="5,0" CommandParameter="{Binding }"
+                                                    <StackPanel Orientation="Horizontal" >
+                                                        <Border Background="#FF99A4BC" Width="50">
+                                                            <Image Source="{Binding BookImage}" MaxWidth="50" MaxHeight="50" Margin="5,0"></Image>
+                                                        </Border>
+                                                        <Button MaxHeight="20" MaxWidth="50" Margin="5,0" CommandParameter="{Binding }"
                                                                 Style="{StaticResource MaterialDesignFlatLightButton}" Foreground="#FF99A4BC"
                                                                 Content="{md:PackIcon Kind=ProgressUpload}" Command="{Binding DataContext.UploadBookImageCmd, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=DataGrid}}"></Button>
                                                     </StackPanel>

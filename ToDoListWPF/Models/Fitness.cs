@@ -7,15 +7,9 @@ using System.Threading.Tasks;
 
 namespace ToDoListWPF.Models
 {
-    public class Fitness:BindableBase
+    public class Fitness:BaseModel
     {
-		private string fitID;
 
-		public string FitID
-		{
-			get { return fitID; }
-			set { fitID = value; RaisePropertyChanged(); }
-		}
 
 		private DateTime fitDay;
 

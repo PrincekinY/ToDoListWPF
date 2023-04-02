@@ -4,6 +4,7 @@ using Prism.Services.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Configuration;
 using System.Data;
 using System.Linq;
 using System.Reflection;
@@ -18,11 +19,12 @@ namespace ToDoListWPF.ViewModels
 {
     public class FitnessViewModel:BindableBase
     {
-        public FitnessViewModel(IDialogService dialogService)
+        public FitnessViewModel()
         {
             //初始化
-            _dialogService = dialogService;
             CurrentFit = new Fitness();
+            loginID = ConfigurationManager.AppSettings["loginAccount"];
+            SelectMonth = DateTime.Now.Month;
             Allfit = new ObservableCollection<Fitness>();
             GetAllfit();
 
@@ -50,13 +52,13 @@ namespace ToDoListWPF.ViewModels
             var month_date = Convert.ToDateTime(year+"-"+month+"-01");
             var nextmonth_date = Convert.ToDateTime(year + "-" + next_month + "-01").AddDays(-1);
             string sql = "select * from fitnesslist where fitnessDay between '"+month_date+"' and '"+nextmonth_date+ "' ORDER BY fitnessDay";
-            DBCon dBCon = new DBCon();
+            MysqlDBCon dBCon = new MysqlDBCon();
             IDataReader dr = dBCon.sqlRead(sql);
             while (dr.Read())
             {
                 fitnesses.Add(new Fitness()
                 {
-                    FitID = dr["fitnessID"].ToString(),
+                    ID = dr["fitnessID"].ToString(),
                     FitDay = DateTime.Parse(dr["fitnessDay"].ToString()).Date,
                     Weight = float.Parse(dr["weight"].ToString()),
                     Breakfast = dr["breakfast"].ToString(),
@@ -85,6 +87,7 @@ namespace ToDoListWPF.ViewModels
             set { currentFit = value;RaisePropertyChanged(); }
         }
 
+        private readonly string loginID;
         private ObservableCollection<Fitness> allfit;
 
         public ObservableCollection<Fitness> Allfit
@@ -122,7 +125,7 @@ namespace ToDoListWPF.ViewModels
             string sql_data = String.Join("','",currentfit_list);
             string sql = "insert into fitnesslist values('"+sql_data+"')";
             Console.WriteLine(sql);
-            DBCon dBCon = new DBCon();
+            MysqlDBCon dBCon = new MysqlDBCon();
             try
             {
                 int trow = dBCon.sqlExcute(sql);
@@ -206,9 +209,9 @@ namespace ToDoListWPF.ViewModels
         public DelegateCommand<Fitness> DeleteFitCmd { get; private set; }
         private void DeleteFitMethod(Fitness obj)
         {
-            string tid = obj.FitID;
+            string tid = obj.ID;
             string sql = "delete from todolist where todoID='" + tid + "'";
-            DBCon dBCon = new DBCon();
+            MysqlDBCon dBCon = new MysqlDBCon();
             try
             {
                 int trow = dBCon.sqlExcute(sql);
@@ -221,19 +224,19 @@ namespace ToDoListWPF.ViewModels
         private void EditFitMethod()
         {
             var list = GetFitListExceptID();
-            string fid = CurrentFit.FitID;
+            string fid = CurrentFit.ID;
             string sql_data = string.Join("','", list);
             //var todo = new Todos() { TodoID = tid, TodoName = tname, TodoDes = tdes, TodoDay = tdate, TodoStatus = tstatus };
             //string sql = "update todolist set(fitnessDay,weight,breakfast,lunch,dinner,sport,hipline,waistline,belly,bustline,calfgirth,thigh) values('"+sql_data+"') where fitnessID='" + fid + "'";
             string sql = String.Format("update fitnesslist set fitnessDay='{0}',weight='{1}',breakfast='{2}',lunch='{3}',dinner='{4}',sport='{5}',hipline='{6}',waistline='{7}',belly='{8}',bustline='{9}',calfgirth='{10}',thigh='{11}' where fitnessID='{12}'",
                 list[0],list[1], list[2], list[3], list[4], list[5], list[6], list[7], list[8], list[9], list[10], list[11], fid);
-            DBCon dBCon = new DBCon();
+            MysqlDBCon dBCon = new MysqlDBCon();
             try
             {
                 int trow = dBCon.sqlExcute(sql);
                 if (trow > 0)
                 {
-                    var tindex = Allfit.IndexOf(Allfit.First(p => p.FitID == fid));
+                    var tindex = Allfit.IndexOf(Allfit.First(p => p.ID == fid));
                     Allfit[tindex].FitDay = CurrentFit.FitDay;
                     Allfit[tindex].Weight = CurrentFit.Weight;
                     Allfit[tindex].Breakfast = CurrentFit.Breakfast;
@@ -260,7 +263,7 @@ namespace ToDoListWPF.ViewModels
             DrawerTitle = "Edit Fit";
             AddBtnVisibility = Visibility.Collapsed;
             EditBtnVisibility = Visibility.Visible;
-            CurrentFit.FitID = obj.FitID;
+            CurrentFit.ID = obj.ID;
             CurrentFit.FitDay = obj.FitDay;
             CurrentFit.Weight = obj.Weight;
             CurrentFit.Breakfast = obj.Breakfast;
@@ -278,18 +281,22 @@ namespace ToDoListWPF.ViewModels
         public DelegateCommand FindSpecificDateFitCmd { get; private set; }
         private void FindSpecificDateFitMethod()
         {
-            string month = SelectMonth;
-            DateTime dateTime = DateTime.Now;
-            var year = dateTime.Year;
-            var month_date = DateTime.Parse(year+"-"+ month + "-01");
-            Allfit = GetFitByMonth(month_date);
+            int month = SelectMonth;
+            try
+            {
+                DateTime dateTime = DateTime.Now;
+                var year = dateTime.Year;
+                var month_date = DateTime.Parse(year + "-" + month + "-01");
+                Allfit = GetFitByMonth(month_date);
+            }
+            catch { CallMessageBox("查找失败啦！"); }
         }
 
-        public IEnumerable<string> Months => new[] { "1","2","3","4","5","6","7","8","9", "10", "11", "12" };
+        public IEnumerable<int> Months => new[] { 1,2,3,4,5,6,7,8,9, 10, 11, 12 };
 
-        private string selectMonth;
+        private int selectMonth;
 
-        public string SelectMonth
+        public int SelectMonth
         {
             get { return selectMonth; }
             set { selectMonth = value; RaisePropertyChanged(); }

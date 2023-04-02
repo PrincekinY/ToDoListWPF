@@ -7,15 +7,10 @@ using System.Threading.Tasks;
 
 namespace ToDoListWPF.Models
 {
-    public class Books:BindableBase
+    public class Books:BaseModel
     {
 		private string bookid;
 
-		public string BookID
-		{
-			get { return bookid; }
-			set { bookid = value; RaisePropertyChanged(); }
-		}
 
 		private string bookname;
 

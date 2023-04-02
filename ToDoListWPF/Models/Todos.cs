@@ -7,15 +7,9 @@ using System.Threading.Tasks;
 
 namespace ToDoListWPF.Models
 {
-    public class Todos:BindableBase
+    public class Todos:BaseModel
     {
-		private string todoID;
 
-		public string TodoID
-		{
-			get { return todoID; }
-			set { todoID = value; RaisePropertyChanged(); }
-		}
 
 		private string todoname;
 

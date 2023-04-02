@@ -117,13 +117,13 @@ namespace ToDoListWPF.ViewModels
             string bstatus_str = CurrentBook.Status;
             int bstatus_int = StatusStrToInt(bstatus_str);
             string sql = "insert into booklist values('" + bid + "','" + bname + "','" + author + "','" + bstart + "','" + bend + "','"+bstatus_int+"')";
-            DBCon dBCon = new DBCon();
+            MysqlDBCon dBCon = new MysqlDBCon();
             try
             {
                 int trow = dBCon.sqlExcute(sql);
                 if (trow > 0)
                 {
-                    BookSet.Add(new Books() { BookID = bid, BookName = bname, Author = author, StartRead = bstart, EndRead = bend,Status=bstatus_str });
+                    BookSet.Add(new Books() { ID = bid, BookName = bname, Author = author, StartRead = bstart, EndRead = bend,Status=bstatus_str });
                     CallMessageBox("Suceess to add.");
                 }
             }
@@ -178,7 +178,7 @@ namespace ToDoListWPF.ViewModels
             ObservableCollection<Books> bookset = new ObservableCollection<Books>();
             //var specific_date = dateTime.Date;
             string sql = "select * from booklist";
-            DBCon dBCon = new DBCon();
+            MysqlDBCon dBCon = new MysqlDBCon();
             IDataReader dr = dBCon.sqlRead(sql);
             while (dr.Read())
             {
@@ -189,7 +189,7 @@ namespace ToDoListWPF.ViewModels
                 var eday = DateTime.Parse(dr["endread"].ToString());
                 var status = IntToBool(Int32.Parse(dr["status"].ToString()));
                 var pic = dr["bookImage"].ToString();
-                Books t = new Books() { BookID = id, BookName = name, Author = author, StartRead = sday, EndRead = eday,Status=status ,BookImage=pic};
+                Books t = new Books() { ID = id, BookName = name, Author = author, StartRead = sday, EndRead = eday,Status=status ,BookImage=pic};
                 bookset.Add(t);
             }
             return bookset;
@@ -207,9 +207,9 @@ namespace ToDoListWPF.ViewModels
         public DelegateCommand<Books> DeleteBookCmd { get; private set; }
         private void DeleteBookMethod(Books obj)
         {
-            string tid = obj.BookID;
+            string tid = obj.ID;
             string sql = "delete from booklist where bookID='" + tid + "'";
-            DBCon dBCon = new DBCon();
+            MysqlDBCon dBCon = new MysqlDBCon();
             try
             {
                 int trow = dBCon.sqlExcute(sql);
@@ -221,7 +221,7 @@ namespace ToDoListWPF.ViewModels
         public DelegateCommand EditBookCmd { get; private set; }
         private void EditBookMethod()
         {
-            string id = CurrentBook.BookID;
+            string id = CurrentBook.ID;
             string name = CurrentBook.BookName;
             string author = CurrentBook.Author;
             var sdate = CurrentBook.StartRead;
@@ -230,13 +230,13 @@ namespace ToDoListWPF.ViewModels
             var status_int = StatusStrToInt(tstatus);
             //var todo = new Books() { BookID = tid, BookName = tname, BookDes = tdes, BookDay = tdate, BookStatus = tstatus };
             string sql = "update booklist set bookName='" + name + "',author='" + author + "',startread='" + sdate + "',endread='"+edate+"',todoStatus='" + status_int + "' where bookID='" + id + "'";
-            DBCon dBCon = new DBCon();
+            MysqlDBCon dBCon = new MysqlDBCon();
             try
             {
                 int trow = dBCon.sqlExcute(sql);
                 if (trow > 0)
                 {
-                    var tindex = BookSet.IndexOf(BookSet.First(p => p.BookID == id));
+                    var tindex = BookSet.IndexOf(BookSet.First(p => p.ID == id));
                     BookSet[tindex].BookName = name;
                     BookSet[tindex].Author = author;
                     BookSet[tindex].StartRead = sdate;
@@ -252,16 +252,21 @@ namespace ToDoListWPF.ViewModels
         public void UploadBookImageMethod(Books obj)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "图像文件(*.jpg;*.jpg;*.jpeg;*.gif;*.png)|*.jpg;*.jpeg;*.gif;*.png";
             openFileDialog.ShowDialog();
-            obj.BookImage = openFileDialog.FileName;
-            //判断文件是不是对的
-            DBCon dBCon = new DBCon();
-            try
+
+            if (openFileDialog.FileName != "")
             {
-                string sql = "update booklist set bookImage = '" + obj.BookImage + "' where bookID='" + obj.BookID + "'";
-                int brow = dBCon.sqlExcute(sql);
+                obj.BookImage = openFileDialog.FileName;
+                //判断文件是不是对的
+                MysqlDBCon dBCon = new MysqlDBCon();
+                try
+                {
+                    string sql = "update booklist set bookImage = '" + obj.BookImage + "' where bookID='" + obj.ID + "'";
+                    int brow = dBCon.sqlExcute(sql);
+                }
+                catch { CallMessageBox("Fail to save db."); }
             }
-            catch { CallMessageBox("Fail to save db."); }
         }
 
     }

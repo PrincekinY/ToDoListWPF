@@ -13,7 +13,7 @@ namespace ToDoListWPF
     {
         protected override Window CreateShell()
         {
-            return Container.Resolve<MainWindow>();
+            return Container.Resolve<LoginView>();
         }
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)

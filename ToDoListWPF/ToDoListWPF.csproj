@@ -18,8 +18,9 @@
     <Resource Include="Views\八月.jpg" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="LiveCharts.Wpf" Version="0.9.7" />
     <PackageReference Include="MaterialDesignThemes" Version="4.7.0-ci315" />
+    <PackageReference Include="MySql.Data" Version="8.0.32.1" />
     <PackageReference Include="Prism.DryIoc" Version="8.1.97" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.8.3" />
   </ItemGroup>
 </Project>

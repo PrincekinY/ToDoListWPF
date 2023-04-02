@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace ToDoListWPF.Views
 {
@@ -15,28 +16,14 @@ namespace ToDoListWPF.Views
         public MainWindow()
         {
             InitializeComponent();
-            
 
-            ///重写最大最小化和关闭
-            btnWinMin.Click += (s, e) => { this.WindowState = WindowState.Minimized; };
-            btnWinMax.Click += (s, e) =>
-            {
-                if (this.WindowState == WindowState.Maximized)
-                    this.WindowState = WindowState.Normal;
-                else
-                    this.WindowState = WindowState.Maximized;
-            };
-            btnWinClose.Click += (s, e) => {
-                this.Close();
-            };
 
-            ///拖动程序
-            topNav.MouseMove += (s, e) =>
-            {
-                if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
-                    this.DragMove();
-
-            };
+            CommandBindings.Add(new CommandBinding(SystemCommands.CloseWindowCommand, (_, __) => {
+                SystemCommands.CloseWindow(this);
+            }));
+            CommandBindings.Add(new CommandBinding(SystemCommands.MinimizeWindowCommand, (_, __) => { SystemCommands.MinimizeWindow(this); }));
+            CommandBindings.Add(new CommandBinding(SystemCommands.MaximizeWindowCommand, (_, __) => { SystemCommands.MaximizeWindow(this); }));
+            CommandBindings.Add(new CommandBinding(SystemCommands.RestoreWindowCommand, (_, __) => { SystemCommands.RestoreWindow(this); }));
         }
 
         

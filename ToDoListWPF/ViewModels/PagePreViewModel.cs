@@ -9,6 +9,7 @@ using System.Drawing;
 //using System.Windows.Forms;
 using System.IO;
 using Microsoft.Win32;
+using System.Windows.Threading;
 
 namespace ToDoListWPF.ViewModels
 {
@@ -18,8 +19,11 @@ namespace ToDoListWPF.ViewModels
 
         public PagePreViewModel()
         {
+            DT = new DispatcherTimer();
             //SelectFilePath = new DelegateCommand(SelectFilePathMethod);
             SelectFilePath = new DelegateCommand(SaveFile);
+            StartConcentrateCmd = new DelegateCommand(StartConcentrateMethod);
+            StopConcentrateCmd = new DelegateCommand(StopConcentrateMethod);
         }
 
         public DelegateCommand SelectFilePath { get; set; }
@@ -53,6 +57,55 @@ namespace ToDoListWPF.ViewModels
         {
             get { return filepath; }
             set { filepath = value; RaisePropertyChanged(); }
+        }
+
+        private DispatcherTimer dispatcherTimer;
+
+        public DispatcherTimer DT
+        {
+            get { return dispatcherTimer; }
+            set { dispatcherTimer = value; }
+        }
+
+
+        public DelegateCommand StartConcentrateCmd { get; set; }
+        public void StartConcentrateMethod()
+        {
+            //DispatcherTimer dispatcherTimer = new DispatcherTimer();
+            DT.Interval = new TimeSpan(0,0,1);
+            DateTime starttime = DateTime.Now;
+            StartTime = starttime;
+            DT.Tick += timer_Tick;
+            DT.Start();
+        }
+
+        public DelegateCommand StopConcentrateCmd { get; set; }
+        public void StopConcentrateMethod()
+        {
+            DT.Stop();
+        }
+
+        public void timer_Tick(object sender, EventArgs e)
+        {
+            DateTime endtime = DateTime.Now;
+            var lasttime = endtime - StartTime;
+            ConcentrateTime = lasttime.ToString(@"hh\:mm\:ss");
+        }
+
+        private string concentime;
+
+        public string ConcentrateTime
+        {
+            get { return concentime; }
+            set { concentime = value; RaisePropertyChanged(); }
+        }
+
+        private DateTime start;
+
+        public DateTime StartTime
+        {
+            get { return start; }
+            set { start = value; RaisePropertyChanged(); }
         }
     }
 

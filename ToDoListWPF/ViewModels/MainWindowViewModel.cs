@@ -4,7 +4,7 @@ namespace ToDoListWPF.ViewModels
 {
     public class MainWindowViewModel : BindableBase
     {
-        private string _title = "Prism Application";
+        private string _title = "Daily Life";
         public string Title
         {
             get { return _title; }
