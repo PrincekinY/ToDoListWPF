@@ -57,6 +57,14 @@ namespace ToDoListWPF.Models
 			set { status = value; RaisePropertyChanged(); }
 		}
 
+		private string bookimage;
+
+		public string BookImage
+		{
+			get { return bookimage; }
+			set { bookimage = value; RaisePropertyChanged(); }
+		}
+
 
 	}
 }

@@ -3,6 +3,7 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net6.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
+	<UseWindowsForms>true</UseWindowsForms>
     <ApplicationIcon>image\3430604_avatar_female_profile_reading_woman_icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>

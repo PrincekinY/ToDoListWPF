@@ -1,4 +1,5 @@
-﻿using Prism.Commands;
+﻿using Microsoft.Win32;
+using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
 using System;
@@ -30,7 +31,7 @@ namespace ToDoListWPF.ViewModels
             EditBookCmd = new DelegateCommand(EditBookMethod);
             OpenAddBookCmd = new DelegateCommand(OpenAddBookMethod);
             OpenEditBookCmd = new DelegateCommand<Books>(OpenEditBookMethod);
-            
+            UploadBookImageCmd = new DelegateCommand<Books>(UploadBookImageMethod);
         }
 
         private Visibility addBtnVisibility;
@@ -187,7 +188,8 @@ namespace ToDoListWPF.ViewModels
                 var sday = DateTime.Parse(dr["startread"].ToString());
                 var eday = DateTime.Parse(dr["endread"].ToString());
                 var status = IntToBool(Int32.Parse(dr["status"].ToString()));
-                Books t = new Books() { BookID = id, BookName = name, Author = author, StartRead = sday, EndRead = eday,Status=status };
+                var pic = dr["bookImage"].ToString();
+                Books t = new Books() { BookID = id, BookName = name, Author = author, StartRead = sday, EndRead = eday,Status=status ,BookImage=pic};
                 bookset.Add(t);
             }
             return bookset;
@@ -246,6 +248,21 @@ namespace ToDoListWPF.ViewModels
             catch { CallMessageBox("Fail to connect."); }
         }
 
+        public DelegateCommand<Books> UploadBookImageCmd { get; set; }
+        public void UploadBookImageMethod(Books obj)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.ShowDialog();
+            obj.BookImage = openFileDialog.FileName;
+            //判断文件是不是对的
+            DBCon dBCon = new DBCon();
+            try
+            {
+                string sql = "update booklist set bookImage = '" + obj.BookImage + "' where bookID='" + obj.BookID + "'";
+                int brow = dBCon.sqlExcute(sql);
+            }
+            catch { CallMessageBox("Fail to save db."); }
+        }
 
     }
 }

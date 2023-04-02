@@ -5,14 +5,21 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:ToDoListWPF.Views"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
+      xmlns:prism="http://prismlibrary.com/"
+      prism:ViewModelLocator.AutoWireViewModel="True"
       xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+      d:DesignHeight="450" d:DesignWidth="800"
       Title="PagePre">
 
     <Grid>
-        <Label>Hi</Label>
-        <md:TimePicker>
-            
-        </md:TimePicker>
+        
+        
+
+        <DockPanel>
+            <!--实现导入导出功能-->
+            <Label DockPanel.Dock="Top">Hi</Label>
+            <TextBox Text="{Binding FilePath}" DockPanel.Dock="Top"></TextBox>
+            <Button Command="{Binding SelectFilePath}"></Button>
+        </DockPanel>
     </Grid>
 </Page>
