@@ -84,7 +84,7 @@ namespace ToDoListWPF.ViewModels
                     string des = dr["attentionDes"].ToString();
                     int type = Int16.Parse(dr["attentionType"].ToString());
                     DateTime inverseTime = DateTime.Parse(dr["inverseTime"].ToString());
-                    res.Add(new AttentionProject() { ID = id, ProjectName = name, ProjectDes = des, ProjectType = type, CurRealTime=inverseTime, InverseTime = inverseTime });
+                    res.Add(new AttentionProject() { ID = id, ProjectName = name, ProjectDes = des, ProjectType = type, InverseTime = inverseTime });
                 }
                 dr.Close();
             }

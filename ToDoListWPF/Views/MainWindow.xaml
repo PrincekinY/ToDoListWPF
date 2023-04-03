@@ -62,6 +62,11 @@
                                                     Style="{StaticResource MaterialDesignFlatLightButton}" FontWeight="Bold" Foreground="White" Cursor="Hand"></Button>
                                         </DockPanel>
                                         <DockPanel VerticalAlignment="Center" DockPanel.Dock="Top">
+                                            <materialDesign:PackIcon Kind="ChartBoxOutline"  Height="20" Width="20" Margin="10,5,5,5" Foreground="White"/>
+                                            <Button Content="OverView"  Click="ConcentrationOverView_Click" x:Name="ConcentrationOverViewBtn"
+                                                    Style="{StaticResource MaterialDesignFlatLightButton}" FontWeight="Bold" Foreground="White" Cursor="Hand"></Button>
+                                        </DockPanel>
+                                        <DockPanel VerticalAlignment="Center" DockPanel.Dock="Top">
                                             <materialDesign:PackIcon Kind="BookmarkBoxMultipleOutline"  Height="20" Width="20" Margin="10,5,5,5" Foreground="White"/>
                                             <Button Content="Bookcase"  Click="Button_Click" 
                                                     Style="{StaticResource MaterialDesignFlatLightButton}" FontWeight="Bold" Foreground="White" Cursor="Hand"></Button>

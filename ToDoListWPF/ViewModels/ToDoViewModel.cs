@@ -204,14 +204,20 @@ namespace ToDoListWPF.ViewModels
         public DelegateCommand<Todos> DeleteTodoCmd { get;private set; }
         private void DeleteTodoMethod(Todos obj)
         {
-            string tid = obj.ID;
-            string sql = "delete from todolist where todoID='" + tid + "'";
+            MessageBoxResult vr = MessageBox.Show("确认删除？", "提示", MessageBoxButton.OKCancel);
+            if (vr == MessageBoxResult.OK)
+            {
+                string tid = obj.ID;
+                string sql = "delete from todolist where todoID='" + tid + "'";
 
-            try {
-                int trow = dBCon.sqlExcute(sql);
-                if (trow > 0) { TodoSet.Remove(obj); MessageBox.Show("删除成功。"); }
+                try
+                {
+                    int trow = dBCon.sqlExcute(sql);
+                    if (trow > 0) { TodoSet.Remove(obj); MessageBox.Show("删除成功。"); }
+                }
+                catch { MessageBox.Show("删除失败。"); }
             }
-            catch { MessageBox.Show("删除失败。"); }
+            
         }
 
         public DelegateCommand EditTodoCmd { get; private set; }

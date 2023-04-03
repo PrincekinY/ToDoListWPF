@@ -14,6 +14,7 @@ namespace ToDoListWPF.Views
         Frame book_frame = new Frame() { Content = new BookcaseView() };
         Frame pre_frame = new Frame() { Content = new PagePre() };
         Frame atten_frame = new Frame() { Content = new AttentionView() };
+        Frame cov_frame = new Frame() { Content = new ConCentrationOverView() };
         public MainWindow()
         {
             InitializeComponent();
@@ -74,6 +75,15 @@ namespace ToDoListWPF.Views
             FitBtn.Style = style;
             BookBtn.Style = style;
             AttentionBtn.Style = style;
+            ConcentrationOverViewBtn.Style = style;
+        }
+
+        private void ConcentrationOverView_Click(object sender, RoutedEventArgs e)
+        {
+            mainContent.Content = cov_frame;
+            ChangeStyle();
+            Style style = (Style)this.FindResource("SelectButton");
+            ConcentrationOverViewBtn.Style = style;
         }
     }
 }

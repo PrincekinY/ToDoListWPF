@@ -32,13 +32,6 @@ namespace ToDoListWPF.Models
 			set { inverseTime = value; RaisePropertyChanged(); }
 		}
 
-		private DateTime curRealTime;
-
-		public DateTime CurRealTime
-		{
-			get { return curRealTime; }
-			set { curRealTime = value; RaisePropertyChanged(); }
-		}
 
 
 		private string projectDes;
@@ -61,20 +54,12 @@ namespace ToDoListWPF.Models
 			set { projectID = value; RaisePropertyChanged(); }
 		}
 
-		private DateTime startTime;
+		private DateTime today;
 
-		public DateTime StartTime
+		public DateTime Today
 		{
-			get { return startTime; }
-			set { startTime = value; RaisePropertyChanged(); }
-		}
-
-		private DateTime endTime;
-
-		public DateTime EndTime
-		{
-			get { return endTime; }
-			set { endTime = value; RaisePropertyChanged(); }
+			get { return today; }
+			set { today = value; RaisePropertyChanged(); }
 		}
 
 		private DateTime lastTime;
@@ -84,6 +69,15 @@ namespace ToDoListWPF.Models
 			get { return lastTime; }
 			set { lastTime = value; RaisePropertyChanged(); }
 		}
+
+		private string attentionName;
+
+		public string AttentionName
+		{
+			get { return attentionName; }
+			set { attentionName = value; RaisePropertyChanged(); }
+		}
+
 
 
 	}

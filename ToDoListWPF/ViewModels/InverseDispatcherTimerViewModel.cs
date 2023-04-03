@@ -171,14 +171,14 @@ namespace ToDoListWPF.ViewModels
 
         public void SaveOperation()
         {
-            DateTime dt = DateTime.Now;
+            DateTime dt = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0); ;
             var res = LastTime.Split(":");
             string id = Guid.NewGuid().ToString();
             
             var stoptime = new DateTime(ThisProject.InverseTime.Year, ThisProject.InverseTime.Month, ThisProject.InverseTime.Day, Int16.Parse(res[0]), Int16.Parse(res[1]), Int16.Parse(res[2]));
             var reallast = ThisProject.InverseTime - stoptime;
             var lasttime = new DateTime(dt.Year,dt.Month,dt.Day,reallast.Hours, reallast.Minutes, reallast.Seconds);
-            string sql = "insert into attention_record values('" + id + "','" + dt + "','" + lasttime + "','" + dt + "','" + loginID + "','" + ThisProject.ID + "')";
+            string sql = "insert into attention_record values('" + id + "','" + dt + "','" + lasttime + "','" + DateTime.Now + "','" + loginID + "','" + ThisProject.ID + "')";
             MysqlDBCon mysqlDBCon = new MysqlDBCon();
             try
             {

@@ -211,14 +211,19 @@ namespace ToDoListWPF.ViewModels
         public DelegateCommand<Books> DeleteBookCmd { get; private set; }
         private void DeleteBookMethod(Books obj)
         {
-            string tid = obj.ID;
-            string sql = "delete from booklist where bookID='" + tid + "'";
-            try
+            MessageBoxResult vr = MessageBox.Show("确认删除？", "提示", MessageBoxButton.OKCancel);
+            if (vr == MessageBoxResult.OK)
             {
-                int trow = dBCon.sqlExcute(sql);
-                if (trow > 0) { BookSet.Remove(obj); MessageBox.Show("删除成功"); }
+                string tid = obj.ID;
+                string sql = "delete from booklist where bookID='" + tid + "'";
+                try
+                {
+                    int trow = dBCon.sqlExcute(sql);
+                    if (trow > 0) { BookSet.Remove(obj); MessageBox.Show("删除成功"); }
+                }
+                catch { MessageBox.Show("删除失败"); }
             }
-            catch { MessageBox.Show("删除失败"); }
+            
         }
 
         public DelegateCommand EditBookCmd { get; private set; }

@@ -208,14 +208,19 @@ namespace ToDoListWPF.ViewModels
         public DelegateCommand<Fitness> DeleteFitCmd { get; private set; }
         private void DeleteFitMethod(Fitness obj)
         {
-            string tid = obj.ID;
-            string sql = "delete from fitnesslist where fitnessID='" + tid + "'";
-            try
+            MessageBoxResult vr = MessageBox.Show("确认删除？", "提示", MessageBoxButton.OKCancel);
+            if (vr == MessageBoxResult.OK)
             {
-                int trow = dBCon.sqlExcute(sql);
-                if (trow > 0) { Allfit.Remove(obj); MessageBox.Show("删除成功^_^"); }
+                string tid = obj.ID;
+                string sql = "delete from fitnesslist where fitnessID='" + tid + "'";
+                try
+                {
+                    int trow = dBCon.sqlExcute(sql);
+                    if (trow > 0) { Allfit.Remove(obj); MessageBox.Show("删除成功^_^"); }
+                }
+                catch { MessageBox.Show("删除失败-_-"); }
             }
-            catch { MessageBox.Show("删除失败-_-"); }
+            
         }
 
         public DelegateCommand EditFitCmd { get; private set; }
