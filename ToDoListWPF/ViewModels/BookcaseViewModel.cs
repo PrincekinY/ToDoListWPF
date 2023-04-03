@@ -130,6 +130,7 @@ namespace ToDoListWPF.ViewModels
                 {
                     BookSet.Add(new Books() { ID = bid, BookName = bname, Author = author, StartRead = bstart, EndRead = bend,Status=bstatus_str });
                     MessageBox.Show("添加成功.");
+                    IsRightDrawerOpen = false;
                 }
             }
             catch { MessageBox.Show("添加失败."); }

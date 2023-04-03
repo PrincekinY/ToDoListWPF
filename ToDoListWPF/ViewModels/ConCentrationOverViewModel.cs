@@ -1,4 +1,8 @@
-﻿using Prism.Commands;
+﻿using Google.Protobuf.WellKnownTypes;
+using ImTools;
+using LiveCharts;
+using LiveCharts.Wpf;
+using Prism.Commands;
 using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
@@ -8,8 +12,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 using ToDoListWPF.Dao;
+using ToDoListWPF.Extensions;
 using ToDoListWPF.Models;
+using ToDoListWPF.Views;
 
 namespace ToDoListWPF.ViewModels
 {
@@ -31,6 +38,16 @@ namespace ToDoListWPF.ViewModels
             OpenEditCmd = new DelegateCommand<AttentionRecord>(OpenEditMethod);
             CloseEditCmd = new DelegateCommand(CloseEditMethod);
             EditLastTimeCmd = new DelegateCommand(EditLastTimeMethod);
+
+            //可视化
+            TimePieSeriesCollection = new SeriesCollection();
+            TimeBarSeriesCollection = new SeriesCollection();
+            OnedayProjects = new List<string>();
+            ProjectsXAxis = new Axis();
+            PieChartVisibility = Visibility.Visible;
+            BarChartVisibility = Visibility.Collapsed;
+            ChangeVisibilityChart = new DelegateCommand<ConCentrationOverView>(ChangeVisibilityChartMethod);
+            ShowPieCMD = new DelegateCommand(ShowPieMethod);    
         }
 
         public ObservableCollection<AttentionRecord> GetTodayAttentionRecord(DateTime dt)
@@ -70,6 +87,7 @@ namespace ToDoListWPF.ViewModels
         public void SearchRecordByDateMethod()
         {
             AllAttentionRecords = GetTodayAttentionRecord(SelectedDate);
+            ShowPieMethod();
         }
 
         private DateTime selectedDate;
@@ -170,6 +188,177 @@ namespace ToDoListWPF.ViewModels
         {
             get { return curARecord; }
             set { curARecord = value; RaisePropertyChanged(); }
+        }
+
+        private SeriesCollection timePieSeriesCollection;
+
+        public SeriesCollection TimePieSeriesCollection
+        {
+            get { return timePieSeriesCollection; }
+            set { timePieSeriesCollection = value; RaisePropertyChanged(); }
+        }
+
+        private SeriesCollection timebarSeriesCollection;
+
+        public SeriesCollection TimeBarSeriesCollection
+        {
+            get { return timebarSeriesCollection; }
+            set { timebarSeriesCollection = value; RaisePropertyChanged(); }
+        }
+
+        public SeriesCollection ProTimePieSeries2()
+        {
+            SeriesCollection seriesCollection = new SeriesCollection();
+            List<string> list_name = AllAttentionRecords.Select(t => t.AttentionName).Distinct().ToList();
+            int totalsec = 0;
+            List<int> partsec = new List<int>();
+            for (var i=0;i<list_name.Count;i++)
+            {
+                partsec.Add(0);
+                var res = AllAttentionRecords.Where(t => t.AttentionName == list_name[i]);
+                foreach(var record in res)
+                {
+                    int secs = record.LastTime.Hour * 60 * 60 + record.LastTime.Minute * 60 + record.LastTime.Second;
+                    partsec[i] += secs;
+                    totalsec += secs;
+                }
+            }
+            List<string> labels = new List<string>();
+            for (var i = 0; i < list_name.Count; i++)
+            {
+                //TimeSpan ts = new TimeSpan(0, 0, partsec[i]);
+                //labels.Add(ts.ToString(@"hh\:mm\:ss"));
+                PieSeries pieSeries = new PieSeries();
+                pieSeries.Title = list_name[i];
+                pieSeries.Values = new ChartValues<int>();
+                pieSeries.Values.Add(partsec[i]);
+                //自定义数据标签
+                pieSeries.LabelPoint = point => new TimeSpan(0, 0, (int)point.Y).ToString(@"hh\:mm\:ss");
+                pieSeries.DataLabels = true;
+                var c =new BeautifulColors().ReturnIntToColor(i);
+                pieSeries.Fill = new SolidColorBrush(Color.FromArgb(c.A, c.R, c.G, c.B));
+                seriesCollection.Add(pieSeries);
+            }
+            return seriesCollection;
+        }
+
+        public SeriesCollection ProTimePieSeries(List<string> list_name, List<int> partsec)
+        {
+            SeriesCollection seriesCollection = new SeriesCollection();
+            for (var i = 0; i < list_name.Count; i++)
+            {
+                //TimeSpan ts = new TimeSpan(0, 0, partsec[i]);
+                //labels.Add(ts.ToString(@"hh\:mm\:ss"));
+                PieSeries pieSeries = new PieSeries();
+                pieSeries.Title = list_name[i];
+                pieSeries.Values = new ChartValues<int>();
+                pieSeries.Values.Add(partsec[i]);
+                //自定义数据标签
+                pieSeries.LabelPoint = point => new TimeSpan(0, 0, (int)point.Y).ToString(@"hh\:mm\:ss");
+                pieSeries.DataLabels = true;
+                var c = new BeautifulColors().ReturnIntToColor(i);
+                pieSeries.Fill = new SolidColorBrush(Color.FromArgb(c.A, c.R, c.G, c.B));
+                seriesCollection.Add(pieSeries);
+            }
+            return seriesCollection;
+        }
+
+        public DelegateCommand ShowPieCMD { get; set; }
+        public void ShowPieMethod()
+        {
+            List<string> list_name = AllAttentionRecords.Select(t => t.AttentionName).Distinct().ToList();
+            List<int> partsec = new List<int>();
+            for (var i = 0; i < list_name.Count; i++)
+            {
+                partsec.Add(0);
+                var res = AllAttentionRecords.Where(t => t.AttentionName == list_name[i]);
+                foreach (var record in res)
+                {
+                    int secs = record.LastTime.Hour * 60 * 60 + record.LastTime.Minute * 60 + record.LastTime.Second;
+                    partsec[i] += secs;
+                }
+            }
+            OnedayProjects.Clear();
+            list_name.ForEach(i => OnedayProjects.Add(i)); ;
+
+            TimePieSeriesCollection = ProTimePieSeries(list_name,partsec);
+            TimeBarSeriesCollection = ProTimeBarSeries(list_name,partsec);
+        }
+
+        public SeriesCollection ProTimeBarSeries(List<string> list_name, List<int> partsec)
+        {
+            SeriesCollection seriesCollection = new SeriesCollection();
+            //这样是用来画7天不一样的数据的
+            //for (var i = 0; i < list_name.Count; i++)
+            //{
+            //StackedColumnSeries series = new StackedColumnSeries();
+            //series.Title = list_name[i];
+            //series.Values = new ChartValues<int>();
+            //series.Values.Add(partsec[i]);
+            //自定义数据标签
+            //series.LabelPoint = point => new TimeSpan(0, 0, (int)point.Y).ToString(@"hh\:mm\:ss");
+            //series.DataLabels = true;
+            //var c = new BeautifulColors().ReturnIntToColor(i);
+            //series.Fill = new SolidColorBrush(Color.FromArgb(c.A, c.R, c.G, c.B));
+            //seriesCollection.Add(series);
+            //}
+            
+            StackedColumnSeries series = new StackedColumnSeries();
+            series.Title = "专注时间";
+            series.Values = new ChartValues<int>();
+            for (var i = 0; i < list_name.Count; i++)
+            {
+                series.Values.Add(partsec[i]);
+            }
+            series.LabelPoint = point => new TimeSpan(0, 0, (int)point.Y).ToString(@"hh\:mm\:ss");
+            var c = new BeautifulColors().ReturnIntToColor(0);
+            series.Fill = new SolidColorBrush(Color.FromArgb(c.A, c.R, c.G, c.B));
+            seriesCollection.Add(series);
+            return seriesCollection;
+        }
+        private List<string> onedayProjects;
+
+        public List<string> OnedayProjects
+        {
+            get { return onedayProjects; }
+            set { onedayProjects = value; RaisePropertyChanged(); }
+        }
+
+        private Axis projectsXAxis;
+
+        public Axis ProjectsXAxis
+        {
+            get { return projectsXAxis; }
+            set { projectsXAxis = value; RaisePropertyChanged(); }
+        }
+
+        public DelegateCommand<ConCentrationOverView> ChangeVisibilityChart { get; set; }
+        public void ChangeVisibilityChartMethod(ConCentrationOverView obj)
+        {
+            //int param = Int16.Parse(obj.ToString());
+            //if(param == 0) { PieChartVisibility = Visibility.Visible;BarChartVisibility = Visibility.Collapsed; }
+            //else { PieChartVisibility = Visibility.Collapsed; BarChartVisibility = Visibility.Visible; }
+            if ((bool)obj.barradio.IsChecked) { PieChartVisibility = Visibility.Collapsed; 
+                BarChartVisibility = Visibility.Visible;
+                obj.piechart.IsSelected = true;
+            }
+            else { PieChartVisibility = Visibility.Visible; BarChartVisibility = Visibility.Collapsed; obj.barchart.IsSelected = true; }
+        }
+
+        private Visibility piechartVisibility;
+
+        public Visibility PieChartVisibility
+        {
+            get { return piechartVisibility; }
+            set { piechartVisibility = value; RaisePropertyChanged(); }
+        }
+
+        private Visibility barchartVisibility;
+
+        public Visibility BarChartVisibility
+        {
+            get { return barchartVisibility; }
+            set { barchartVisibility = value; RaisePropertyChanged(); }
         }
 
     }

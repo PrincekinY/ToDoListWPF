@@ -132,8 +132,9 @@ namespace ToDoListWPF.ViewModels
                 int trow = dBCon.sqlExcute(sql);
                 if (trow > 0)
                 {
-                    Allfit = GetFitByMonth(SelectMonth);
+                    
                     MessageBox.Show("添加成功！");
+                    Allfit = GetFitByMonth(SelectMonth);
                     IsRightDrawerOpen = false;
                 }
             }
