@@ -7,11 +7,12 @@ using System.Configuration;
 using System.Windows;
 using System.Windows.Threading;
 using ToDoListWPF.Dao;
+using ToDoListWPF.Extensions;
 using ToDoListWPF.Models;
 
 namespace ToDoListWPF.ViewModels
 {
-    public class AttentionDispatcherTimerViewModel : BindableBase
+    public class InverseDispatcherTimerViewModel : BindableBase
     {
         private string _title = "Concentration";
         private AttentionProject thisProject;
@@ -30,7 +31,7 @@ namespace ToDoListWPF.ViewModels
             set { SetProperty(ref _title, value); }
         }
 
-        public AttentionDispatcherTimerViewModel(AttentionProject project)
+        public InverseDispatcherTimerViewModel(AttentionProject project)
         {
             loginID = ConfigurationManager.AppSettings["loginAccount"];
             ThisProject = project;
@@ -43,7 +44,8 @@ namespace ToDoListWPF.ViewModels
             CanStop = false;
 
             //初始化显示LastTime
-            var startlast = ThisProject.InverseTime - new DateTime(ThisProject.InverseTime.Year, ThisProject.InverseTime.Month, ThisProject.InverseTime.Day, 0, 0, 0);
+            startlast = ThisProject.InverseTime - new DateTime(ThisProject.InverseTime.Year, ThisProject.InverseTime.Month, ThisProject.InverseTime.Day, 0, 0, 0);
+            StartPeriod = startlast;
             LastTime = startlast.ToString(@"hh\:mm\:ss");
 
             RestartConcentration = new DelegateCommand(RestartConcentrationMethod);
@@ -76,7 +78,16 @@ namespace ToDoListWPF.ViewModels
             DateTime endtime = DateTime.Now;
             var lasttime = endtime - StartTime;
             OnPeriod = lasttime;
-            LastTime = (lasttime+StopPeriod).ToString(@"hh\:mm\:ss");
+            var lefttime = StartPeriod - (lasttime + StopPeriod);
+            LastTime = lefttime.ToString(@"hh\:mm\:ss");
+            if (lefttime<=new TimeSpan(0, 0, 0))
+            {
+                BeepUp.Beep(700, 200);
+                BeepUp.Beep(700, 200);
+                BeepUp.Beep(700, 200);
+                MessageBox.Show("倒计时完成，将自动保存记录！");
+                SaveOperation();
+            }
         }
 
         private DispatcherTimer dispatcherTimer;
@@ -136,6 +147,16 @@ namespace ToDoListWPF.ViewModels
             set { canStop = value; RaisePropertyChanged(); }
         }
 
+        private TimeSpan startlast;
+        private TimeSpan startPeriod;
+
+        public TimeSpan StartPeriod
+        {
+            get { return startPeriod; }
+            set { startPeriod = value; RaisePropertyChanged(); }
+        }
+
+
         public DelegateCommand SaveConcentration { get; set; }
         public void SaveConcentrationMethod()
         {
@@ -143,29 +164,36 @@ namespace ToDoListWPF.ViewModels
             if (vr == MessageBoxResult.OK) // 如果是确定，就执行下面代码，记得换上自己的代码喔
             {
                 //处理时间
-                DateTime dt = DateTime.Now;
-                var res = LastTime.Split(":");
-                string id = Guid.NewGuid().ToString();
-                var lasttime = new DateTime(dt.Year, dt.Month, dt.Day, Int16.Parse(res[0]), Int16.Parse(res[1]), Int16.Parse(res[2]));
-                string sql = "insert into attention_record values('"+id+"','"+dt+"','"+ lasttime + "','"+dt+"','"+loginID+"','"+ThisProject.ID+"')";
-                MysqlDBCon mysqlDBCon = new MysqlDBCon();
-                try
-                {
-                    int row = mysqlDBCon.sqlExcute(sql);
-                    if (row > 0)
-                    {
-                        MessageBox.Show("保存成功！");
-                        //重置
-                        StopConcentrateMethod();
-                        StopPeriod = new TimeSpan();
-                        OnPeriod = new TimeSpan();
-                        LastTime = "00:00:00";
-                    }
-                }
-                catch { MessageBox.Show("保存失败！"); }
+                SaveOperation();
             }
 
         }
 
+        public void SaveOperation()
+        {
+            DateTime dt = DateTime.Now;
+            var res = LastTime.Split(":");
+            string id = Guid.NewGuid().ToString();
+            
+            var stoptime = new DateTime(ThisProject.InverseTime.Year, ThisProject.InverseTime.Month, ThisProject.InverseTime.Day, Int16.Parse(res[0]), Int16.Parse(res[1]), Int16.Parse(res[2]));
+            var reallast = ThisProject.InverseTime - stoptime;
+            var lasttime = new DateTime(dt.Year,dt.Month,dt.Day,reallast.Hours, reallast.Minutes, reallast.Seconds);
+            string sql = "insert into attention_record values('" + id + "','" + dt + "','" + lasttime + "','" + dt + "','" + loginID + "','" + ThisProject.ID + "')";
+            MysqlDBCon mysqlDBCon = new MysqlDBCon();
+            try
+            {
+                int row = mysqlDBCon.sqlExcute(sql);
+                if (row > 0)
+                {
+                    MessageBox.Show("保存成功！");
+                    //重置
+                    StopConcentrateMethod();
+                    StopPeriod = new TimeSpan();
+                    OnPeriod = new TimeSpan();
+                    LastTime = startlast.ToString(@"hh\:mm\:ss");
+                }
+            }
+            catch { MessageBox.Show("保存失败！"); }
+        }
     }
 }

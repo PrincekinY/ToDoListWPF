@@ -39,6 +39,7 @@
                 <Button Command="{Binding StartConcentrateCmd}" Cursor="Hand">Start concentrate</Button>
                 <Button Command="{Binding StopConcentrateCmd}" Cursor="Hand">Stop concentrate</Button>
             </DockPanel>
+            <Button Command="{Binding InfoVoiceCmd}" Cursor="Hand">发声</Button>
             <md:Card Width="200">
                 <Border Background="#FFBAC2D4" BorderThickness="2" >
                     <Grid >

@@ -25,4 +25,15 @@
     <PackageReference Include="MySql.Data" Version="8.0.32.1" />
     <PackageReference Include="Prism.DryIoc" Version="8.1.97" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Views\InverseDispatcherTimerView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\InverseDispatcherTimerView.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
 </Project>

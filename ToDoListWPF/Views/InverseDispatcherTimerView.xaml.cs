@@ -18,9 +18,9 @@ namespace ToDoListWPF.Views
     /// <summary>
     /// AttentionDispatcherTimer.xaml 的交互逻辑
     /// </summary>
-    public partial class AttentionDispatcherTimerView : Window
+    public partial class InverseDispatcherTimerView : Window
     {
-        public AttentionDispatcherTimerView()
+        public InverseDispatcherTimerView()
         {
             InitializeComponent();
 
@@ -35,12 +35,12 @@ namespace ToDoListWPF.Views
 
         private void FixTop_BtnClick(object sender, RoutedEventArgs e)
         {
-            SubWindowCon.Topmost = true;
+            SubWindowConI.Topmost = true;
         }
 
         private void CancelFixTop_BtnClick(object sender, RoutedEventArgs e)
         {
-            SubWindowCon.Topmost = false;
+            SubWindowConI.Topmost = false;
         }
     }
 }

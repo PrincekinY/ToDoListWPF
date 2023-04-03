@@ -30,6 +30,7 @@ namespace ToDoListWPF.ViewModels
             ShowCurLastTime = new TimeSpan();
             AllAttention = new ObservableCollection<AttentionProject>();
             AllAttention = GetAllAttentions();
+            CanOpenConcentrationWindow = true; //
 
             IsRightDrawerOpen = false;
             CurrentAttentionProject = new AttentionProject();
@@ -40,6 +41,7 @@ namespace ToDoListWPF.ViewModels
             AddAttentionProject = new DelegateCommand(AddAttentionProjectMethod);
             EditAttentionProject = new DelegateCommand(EditAttentionProjectMethod);
             RestartAttentionRecord = new DelegateCommand<AttentionProject>(RestartAttentionRecordMethod);
+            EventBus.EventAggregatorInstance.GetEvent<DispatcherTimerWindowCloseEvent>().Subscribe(GetConcentrationWindowStatus);
         }
 
         private ObservableCollection<AttentionProject> allAttention;
@@ -177,20 +179,24 @@ namespace ToDoListWPF.ViewModels
                 {
                     MessageBox.Show("倒计时时间小于5min，请重新设置。");
                 }
-            }
-            string id = Guid.NewGuid().ToString();
-            string sql = "insert into attention_project values('" + id + "','" + name + "','" + des + "','" + type + "','" + CurrentAttentionProject.InverseTime.ToString() + "','" + DateTime.Now.ToString() + "','" + loginID + "')";
-            try
-            {
-                int row = dbCon.sqlExcute(sql);
-                if (row > 0)
+                else
                 {
-                    IsRightDrawerOpen = false;
-                    AllAttention.Add(new AttentionProject() { ID = id, ProjectName = name, ProjectDes = des, ProjectType = type, InverseTime = CurrentAttentionProject.InverseTime });
-                    MessageBox.Show("添加成功");
+                    string id = Guid.NewGuid().ToString();
+                    string sql = "insert into attention_project values('" + id + "','" + name + "','" + des + "','" + type + "','" + CurrentAttentionProject.InverseTime.ToString() + "','" + DateTime.Now.ToString() + "','" + loginID + "')";
+                    try
+                    {
+                        int row = dbCon.sqlExcute(sql);
+                        if (row > 0)
+                        {
+                            IsRightDrawerOpen = false;
+                            AllAttention.Add(new AttentionProject() { ID = id, ProjectName = name, ProjectDes = des, ProjectType = type, InverseTime = CurrentAttentionProject.InverseTime });
+                            MessageBox.Show("添加成功");
+                        }
+                    }
+                    catch { MessageBox.Show("添加失败"); }
                 }
             }
-            catch { MessageBox.Show("添加失败"); }
+            
         }
 
         public DelegateCommand EditAttentionProject { get; set; }
@@ -206,22 +212,26 @@ namespace ToDoListWPF.ViewModels
                 {
                     MessageBox.Show("倒计时时间小于5min，请重新设置。");
                 }
-            }
-            string id = CurrentAttentionProject.ID;
-            string sql = "update attention_project set attentionName='"+name+"',attentionDes='"+des+"',attentionType='"+type+"'," +
-                "inverserTime='"+ CurrentAttentionProject.InverseTime + "',changeTime='"+DateTime.Now+"' where attentionID='"+id+"'";
-            try
-            {
-                int row = dbCon.sqlExcute(sql);
-                if (row > 0)
+                else
                 {
-                    AllAttention.Remove(AllAttention.FirstOrDefault(p => p.ID == id));
-                    AllAttention.Add(new AttentionProject() { ID = id, ProjectName = name, ProjectDes = des, ProjectType = type, InverseTime = CurrentAttentionProject.InverseTime });
-                    IsRightDrawerOpen = false;
-                    MessageBox.Show("修改成功");
+                    string id = CurrentAttentionProject.ID;
+                    string sql = "update attention_project set attentionName='" + name + "',attentionDes='" + des + "',attentionType='" + type + "'," +
+                        "inverseTime='" + CurrentAttentionProject.InverseTime + "',changeTime='" + DateTime.Now + "' where attentionID='" + id + "'";
+                    try
+                    {
+                        int row = dbCon.sqlExcute(sql);
+                        if (row > 0)
+                        {
+                            AllAttention.Remove(AllAttention.FirstOrDefault(p => p.ID == id));
+                            AllAttention.Add(new AttentionProject() { ID = id, ProjectName = name, ProjectDes = des, ProjectType = type, InverseTime = CurrentAttentionProject.InverseTime });
+                            IsRightDrawerOpen = false;
+                            MessageBox.Show("修改成功");
+                        }
+                    }
+                    catch { MessageBox.Show("修改失败"); }
                 }
             }
-            catch { MessageBox.Show("修改失败"); }
+            
         }
 
         public DelegateCommand<AttentionProject> RestartAttentionRecord { get; set; }
@@ -235,10 +245,30 @@ namespace ToDoListWPF.ViewModels
             //AttentionDT.Tick += timer_Tick;
             //AttentionDT.Start();
             //obj.CurRealTime += ShowCurLastTime;
-            AttentionDispatcherTimerView view = new AttentionDispatcherTimerView();
-            AttentionDispatcherTimerViewModel viewModel = new AttentionDispatcherTimerViewModel(obj);
-            view.DataContext = viewModel;
-            view.Show();
+            if (CanOpenConcentrationWindow)
+            {
+                if (obj.ProjectType == 1)
+                {
+                    AttentionDispatcherTimerView view = new AttentionDispatcherTimerView();
+                    AttentionDispatcherTimerViewModel viewModel = new AttentionDispatcherTimerViewModel(obj);
+                    view.DataContext = viewModel;
+                    
+                    view.Show();
+                    CanOpenConcentrationWindow = false;
+                }
+                else
+                {
+                    InverseDispatcherTimerView view = new InverseDispatcherTimerView();
+                    InverseDispatcherTimerViewModel viewModel = new InverseDispatcherTimerViewModel(obj);
+                    view.DataContext = viewModel;
+                    view.Show();
+                    CanOpenConcentrationWindow = false;
+                }
+            }
+            else
+            {
+                MessageBox.Show("已经打开了一个专注，结束后才能开启其他专注！");
+            }
         }
 
         public void timer_Tick(object sender, EventArgs e)
@@ -305,6 +335,19 @@ namespace ToDoListWPF.ViewModels
         {
             get { return showCurStartTime; }
             set { showCurStartTime = value; RaisePropertyChanged(); }
+        }
+
+        private bool canOpenConcentrationWindow;
+
+        public bool CanOpenConcentrationWindow
+        {
+            get { return canOpenConcentrationWindow; }
+            set { canOpenConcentrationWindow = value; RaisePropertyChanged(); }
+        }
+
+        public void GetConcentrationWindowStatus(bool obj)
+        {
+            CanOpenConcentrationWindow = true;
         }
 
     }

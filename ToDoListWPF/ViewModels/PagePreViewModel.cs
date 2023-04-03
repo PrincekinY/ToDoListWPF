@@ -10,6 +10,7 @@ using System.Drawing;
 using System.IO;
 using Microsoft.Win32;
 using System.Windows.Threading;
+using ToDoListWPF.Extensions;
 
 namespace ToDoListWPF.ViewModels
 {
@@ -24,6 +25,8 @@ namespace ToDoListWPF.ViewModels
             SelectFilePath = new DelegateCommand(SaveFile);
             StartConcentrateCmd = new DelegateCommand(StartConcentrateMethod);
             StopConcentrateCmd = new DelegateCommand(StopConcentrateMethod);
+
+            InfoVoiceCmd = new DelegateCommand(InfoVoiceMethod);
         }
 
         public DelegateCommand SelectFilePath { get; set; }
@@ -106,6 +109,12 @@ namespace ToDoListWPF.ViewModels
         {
             get { return start; }
             set { start = value; RaisePropertyChanged(); }
+        }
+
+        public DelegateCommand InfoVoiceCmd { get; set; }
+        public void InfoVoiceMethod()
+        {
+            BeepUp.Beep(700, 200);
         }
     }
 
