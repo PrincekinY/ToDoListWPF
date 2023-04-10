@@ -175,28 +175,25 @@ namespace ToDoListWPF.ViewModels
             int type = CurrentAttentionProject.ProjectType;
             if (type == 1) { CurrentAttentionProject.InverseTime = new DateTime(2000,1,1,0,0,0) ; }
             else { 
-                if (CurrentAttentionProject.InverseTime.Hour==0&& CurrentAttentionProject.InverseTime.Minute < 0)
+                if (CurrentAttentionProject.InverseTime.Hour==0&& CurrentAttentionProject.InverseTime.Minute < 5)
                 {
                     MessageBox.Show("倒计时时间小于5min，请重新设置。");
                 }
-                else
+            }
+            string id = Guid.NewGuid().ToString();
+            string sql = "insert into attention_project values('" + id + "','" + name + "','" + des + "','" + type + "','" + CurrentAttentionProject.InverseTime.ToString() + "','" + DateTime.Now.ToString() + "','" + loginID + "')";
+            try
+            {
+                int row = dbCon.sqlExcute(sql);
+                if (row > 0)
                 {
-                    string id = Guid.NewGuid().ToString();
-                    string sql = "insert into attention_project values('" + id + "','" + name + "','" + des + "','" + type + "','" + CurrentAttentionProject.InverseTime.ToString() + "','" + DateTime.Now.ToString() + "','" + loginID + "')";
-                    try
-                    {
-                        int row = dbCon.sqlExcute(sql);
-                        if (row > 0)
-                        {
-                            IsRightDrawerOpen = false;
-                            AllAttention.Add(new AttentionProject() { ID = id, ProjectName = name, ProjectDes = des, ProjectType = type, InverseTime = CurrentAttentionProject.InverseTime });
-                            MessageBox.Show("添加成功");
-                        }
-                    }
-                    catch { MessageBox.Show("添加失败"); }
+                    IsRightDrawerOpen = false;
+                    AllAttention.Add(new AttentionProject() { ID = id, ProjectName = name, ProjectDes = des, ProjectType = type, InverseTime = CurrentAttentionProject.InverseTime });
+                    MessageBox.Show("添加成功");
                 }
             }
-            
+            catch { MessageBox.Show("添加失败"); }
+
         }
 
         public DelegateCommand EditAttentionProject { get; set; }
@@ -212,26 +209,23 @@ namespace ToDoListWPF.ViewModels
                 {
                     MessageBox.Show("倒计时时间小于5min，请重新设置。");
                 }
-                else
+            }
+            string id = CurrentAttentionProject.ID;
+            string sql = "update attention_project set attentionName='" + name + "',attentionDes='" + des + "',attentionType='" + type + "'," +
+                "inverseTime='" + CurrentAttentionProject.InverseTime + "',changeTime='" + DateTime.Now + "' where attentionID='" + id + "'";
+            try
+            {
+                int row = dbCon.sqlExcute(sql);
+                if (row > 0)
                 {
-                    string id = CurrentAttentionProject.ID;
-                    string sql = "update attention_project set attentionName='" + name + "',attentionDes='" + des + "',attentionType='" + type + "'," +
-                        "inverseTime='" + CurrentAttentionProject.InverseTime + "',changeTime='" + DateTime.Now + "' where attentionID='" + id + "'";
-                    try
-                    {
-                        int row = dbCon.sqlExcute(sql);
-                        if (row > 0)
-                        {
-                            AllAttention.Remove(AllAttention.FirstOrDefault(p => p.ID == id));
-                            AllAttention.Add(new AttentionProject() { ID = id, ProjectName = name, ProjectDes = des, ProjectType = type, InverseTime = CurrentAttentionProject.InverseTime });
-                            IsRightDrawerOpen = false;
-                            MessageBox.Show("修改成功");
-                        }
-                    }
-                    catch { MessageBox.Show("修改失败"); }
+                    AllAttention.Remove(AllAttention.FirstOrDefault(p => p.ID == id));
+                    AllAttention.Add(new AttentionProject() { ID = id, ProjectName = name, ProjectDes = des, ProjectType = type, InverseTime = CurrentAttentionProject.InverseTime });
+                    IsRightDrawerOpen = false;
+                    MessageBox.Show("修改成功");
                 }
             }
-            
+            catch { MessageBox.Show("修改失败"); }
+
         }
 
         public DelegateCommand<AttentionProject> RestartAttentionRecord { get; set; }
